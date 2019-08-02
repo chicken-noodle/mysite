@@ -37,8 +37,8 @@ class stu_basic_info(models.Model):
 class user_login_info(models.Model):
 	account = models.CharField(max_length=25, primary_key=True)
 	psword = models.CharField(max_length=25)
-	have_login = models.CharField(max_length=5,default='0')
-	have_alter = models.CharField(max_length=5,default='0')
+	have_login = models.CharField(max_length=5, default='0')
+	have_alter = models.CharField(max_length=5, default='0')
 	ip = models.CharField(max_length=25)
 	jurisdiction = models.CharField(max_length=5)
 
@@ -66,19 +66,20 @@ class com_basic_info(models.Model):
 	end_regit = models.DateTimeField(auto_now=False, auto_now_add=False, null=True, blank=True)
 	begin_time = models.DateTimeField(auto_now=False, auto_now_add=False, null=True, blank=True)
 	end_time = models.DateTimeField(auto_now=False, auto_now_add=False, null=True, blank=True)
-	num_stu = models.IntegerField(null=True, blank=True)
-	need_full = models.IntegerField(null=True, blank=True)
-	same_stu = models.IntegerField(null=True, blank=True)
+	num_stu = models.IntegerField(default=1)
+	need_full = models.IntegerField(default=0)
+	same_stu = models.IntegerField(default=0)
+	com_sort_num = models.IntegerField(default=1)
 	com_web = models.CharField(max_length=225, null=True, blank=True)
-	if_web = models.IntegerField(null=True, blank=True)
-	num_teach = models.IntegerField(null=True, blank=True)
+	if_web = models.IntegerField(default=0)
+	num_teach = models.IntegerField(default=1)
 
 #竞赛小组信息
 class com_group_basic_info(models.Model):
 	com_id = models.ForeignKey('com_basic_info', to_field='com_id', on_delete=models.DO_NOTHING)
 	group_id = models.IntegerField()
 	group_name = models.CharField(max_length=25,null=True, blank=True)
-	group_num = models.IntegerField(null=True, blank=True)
+	group_num = models.IntegerField(default=1)
 	class Meta:
 		unique_together = ('com_id', 'group_id')
 
@@ -87,3 +88,14 @@ class com_stu_info(models.Model):
 	com_id = models.ForeignKey('com_basic_info', to_field='com_id', on_delete=models.DO_NOTHING)
 	group_id = models.IntegerField(null=True, blank=True)
 	stu_id = models.ForeignKey('stu_basic_info', to_field='stu_number', on_delete=models.DO_NOTHING)
+
+#竞赛指导老师信息
+class com_teach_info(models.Model):
+	com_id = models.ForeignKey('com_basic_info', to_field='com_id', on_delete=models.DO_NOTHING)
+	group_id = models.IntegerField(null=True, blank=True)
+	teach_id = models.ForeignKey('teach_basic_info', to_field='tea_number', on_delete=models.DO_NOTHING)
+
+#竞赛组别信息
+class com_sort_info(models.Model):
+	com_id = models.ForeignKey('com_basic_info', to_field='com_id', on_delete=models.DO_NOTHING)
+	sort_name = models.CharField(max_length=50)

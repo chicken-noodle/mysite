@@ -24,4 +24,7 @@ urlpatterns = [
     path('logout/', views.logout),
     path('alter_info_stu/', views.alter_info_stu),
     path('alter_info_teach/', views.alter_info_teach),
+    path('com_list/', views.com_list),
+    path('com_detail/', views.com_detail),
+    path('com_apply/', views.com_apply),
 ]

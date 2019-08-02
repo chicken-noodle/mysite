@@ -230,3 +230,33 @@ def alter_info_teach(request):
 		return redirect('/home/')  
 
 	return render(request,'alter_info_teach.html',context)
+
+def com_list(request):
+	context = {}
+	com_basic_info = models.com_basic_info.objects.all()
+	context['com_list'] = com_basic_info
+
+	return render(request, 'com_list.html',context)
+
+def com_detail(request):
+	context = {}
+	if request.method == 'GET':
+		id = request.GET.get('id')
+		#print(id)
+		com_info = get_object_or_404(models.com_basic_info,com_id=id)
+		#插入竞赛公告
+		context['inform'] = str("[通知]竞赛通知")
+		#插入报名流程
+		context['flow'] = str("报名流程")
+		context['com_info'] = com_info
+	return render(request, 'com_detail.html', context)
+
+def com_apply(request):
+	context = {}
+	if request.method == 'GET':
+		id = request.GET.get('id')
+		#print(id)
+		com_info = get_object_or_404(models.com_basic_info,com_id=id)
+		# 插入竞赛公告
+		context['com_info'] = com_info
+	return render(request, 'com_apply.html', context)
