@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}
+	学科竞赛|竞赛一览
+{% endblock %}
+
+{% block is_activate3 %}
+    active
+{% endblock %}
+
+{% block content %}
+    <div class="jumbotron">
+    <h1>{{ inform }}</h1>
+    <p>{{ com_info.com_name }}</p>
+
+    <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+    报名
+    </button>
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">报名流程</h4>
+      </div>
+      <div class="modal-body">
+        {{ flow }}
+      </div>
+      <div class="modal-footer">
+          <p><a class="btn btn-primary" href="/com_apply_first?id={{ com_info.com_id }}" role="button">继续</a></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+    </div>
+{% endblock %}

@@ -8,6 +8,7 @@ class depart_info(models.Model):
 #专业信息
 class major_info(models.Model):
 	major_name = models.CharField(max_length=25, primary_key=True)
+	depart = models.ForeignKey('depart_info', to_field='depart_name', on_delete=models.DO_NOTHING)
 
 #年级信息
 class grade_info(models.Model):
@@ -76,26 +77,51 @@ class com_basic_info(models.Model):
 
 #竞赛小组信息
 class com_group_basic_info(models.Model):
-	com_id = models.ForeignKey('com_basic_info', to_field='com_id', on_delete=models.DO_NOTHING)
-	group_id = models.IntegerField()
+	group_id = models.AutoField(primary_key=True)
+	com_id = models.ForeignKey('com_basic_info', to_field='com_id', on_delete=models.DO_NOTHING,default='')
 	group_name = models.CharField(max_length=25,null=True, blank=True)
 	group_num = models.IntegerField(default=1)
-	class Meta:
-		unique_together = ('com_id', 'group_id')
+	com_group = models.ForeignKey('com_sort_info', to_field='sort_name', on_delete=models.DO_NOTHING,default='')
+	product_name = models.CharField(max_length=50,null=True, blank=True)
+	else_info = models.TextField(default='',null=True, blank=True)
 
 #竞赛学生信息
 class com_stu_info(models.Model):
 	com_id = models.ForeignKey('com_basic_info', to_field='com_id', on_delete=models.DO_NOTHING)
-	group_id = models.IntegerField(null=True, blank=True)
+	group_id = models.ForeignKey('com_group_basic_info', to_field='group_id', on_delete=models.DO_NOTHING)
 	stu_id = models.ForeignKey('stu_basic_info', to_field='stu_number', on_delete=models.DO_NOTHING)
+	else_info = models.TextField()
+
 
 #竞赛指导老师信息
 class com_teach_info(models.Model):
 	com_id = models.ForeignKey('com_basic_info', to_field='com_id', on_delete=models.DO_NOTHING)
-	group_id = models.IntegerField(null=True, blank=True)
+	group_id = models.ForeignKey('com_group_basic_info', to_field='group_id', on_delete=models.DO_NOTHING)
 	teach_id = models.ForeignKey('teach_basic_info', to_field='tea_number', on_delete=models.DO_NOTHING)
 
 #竞赛组别信息
 class com_sort_info(models.Model):
 	com_id = models.ForeignKey('com_basic_info', to_field='com_id', on_delete=models.DO_NOTHING)
-	sort_name = models.CharField(max_length=50)
+	sort_name = models.CharField(max_length=50, unique=True)
+
+#竞赛报名表所需信息信息
+class com_need_info(models.Model):
+	com_id = models.IntegerField(primary_key=True)
+	stu_num = models.BooleanField(default=0)
+	stu_name = models.BooleanField(default=0)
+	ID_number = models.BooleanField(default=0)
+	sex = models.BooleanField(default=0)
+	depart = models.BooleanField(default=0)
+	major = models.BooleanField(default=0)
+	grade = models.BooleanField(default=0)
+	stu_class = models.BooleanField(default=0)
+	email = models.BooleanField(default=0)
+	phone_num = models.BooleanField(default=0)
+	com_group = models.BooleanField(default=0)
+	group_name = models.BooleanField(default=0)
+	product_name = models.BooleanField(default=0)
+	tea_num = models.IntegerField(default=0)
+	bank_number = models.BooleanField(default=0)
+	else_info = models.BooleanField(default=0)
+
+

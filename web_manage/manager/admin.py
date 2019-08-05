@@ -38,7 +38,9 @@ class teach_basic_info_Admin(admin.ModelAdmin):
 
 @admin.register(com_basic_info)
 class com_basic_info_Admin(admin.ModelAdmin):
-	list_display=('com_id','com_name','begin_regit','end_regit','begin_time','end_time','num_stu','need_full','same_stu','com_sort_num','com_web','if_web','num_teach',)
+	list_display=(
+	'com_id','com_name','begin_regit','end_regit','begin_time','end_time','num_stu','need_full','same_stu',
+	'com_sort_num','com_web','if_web','num_teach',)
 
 @admin.register(com_group_basic_info)
 class com_group_basic_info_Admin(admin.ModelAdmin):
@@ -55,4 +57,10 @@ class com_sort_info_Admin(admin.ModelAdmin):
 @admin.register(com_teach_info)
 class com_teach_info_Admin(admin.ModelAdmin):
 	list_display = ('com_id', 'group_id','teach_id',)
+
+@admin.register(com_need_info)
+class com_need_info_Admin(admin.ModelAdmin):
+	list_display = (
+	'com_id', 'stu_num', 'stu_name', 'ID_number', 'sex', 'depart', 'major', 'grade', 'stu_class',
+	'email', 'phone_num', 'com_group', 'group_name', 'product_name','tea_num','bank_number','else_info',)
 

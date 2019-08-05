@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}
+	学科竞赛|竞赛报名
+{% endblock %}
+
+{% block is_activate3 %}
+    active
+{% endblock %}
+
+{% block content %}
+        <form class="form-horizontal" action="/com_apply_first/?id={{ com_info.com_id }}" method="POST">
+        {% csrf_token %}
+
+            {% if message %}
+            <div class="alert alert-warning alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                {{ message }}
+            </div>
+            {% endif %}
+
+            {% for num in stu_num %}
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">参赛学生学号（{{ num }}）</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="stu_num{{ num }}" id="inputEmail3"
+                               style="width:50%">
+                    </div>
+                </div>
+            {% empty %}
+                <h3>啦啦啦德玛西亚</h3>
+            {% endfor %}
+
+            {% if info_list.com_group == 1 %}
+                    <div class="form-group">
+                        <label for="inputEmail1" class="col-sm-2 control-label">组别</label>
+                        <div class="col-sm-10">
+                            <select name="group" class="form-control" style="width:50%">
+                                {% for group in group_list %}
+                                        <option value ="{{ group.sort_name }}" >
+                                            {{ group.sort_name }}
+                                        </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+            {% endif %}
+
+            {% if info_list.group_name == 1 %}
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">小组名称</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="group_name" class="form-control" id="inputEmail3" style="width:50%">
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if info_list.product_name == 1 %}
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">作品名称</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="product_name" class="form-control" id="inputEmail3" style="width:50%">
+                    </div>
+                </div>
+            {% endif %}
+
+            {% for tea in tea_num %}
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">指导教师</label>
+                    <div class="col-sm-10">
+                        <input type="text" name="tea_name{{ tea }}" class="form-control"
+                               style="width:50%">
+                    </div>
+                </div>
+            {% endfor %}
+
+            {% if info_list.else_info == 1 %}
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-sm-2 control-label">备注</label>
+                    <textarea class="form-control" name="else_info" rows="3" style="width: 50%"></textarea>
+                </div>
+            {% endif %}
+         <button type="submit" class="btn btn-default">下一步</button>
+        </form>
+{% endblock %}

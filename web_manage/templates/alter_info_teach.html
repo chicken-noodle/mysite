@@ -16,13 +16,15 @@
     {% endif %}
 
     {% csrf_token %}
+
+    <fieldset disabled>
     	<div class="form-group">
         	<label for="inputEmail1" class="col-sm-2 control-label">工号</label>
         	<div class="col-sm-10">
             {% if teach.tea_number == None %}
             <input type="text" class="form-control" name="tea_number" id="exampleInputEmail1" value="" style="width:75%">
             {% else %}
-        	<input type="text" class="form-control" name="tea_number" id="exampleInputEmail1" value="{{ teach.tea_number }}" style="width:75%" onfocus=this.blur()>
+        	<input type="text" class="form-control" name="tea_number" id="disabledTextInput" value="{{ teach.tea_number }}" style="width:75%" placeholder="Disabled input">
             {% endif %}
         </div>
     	</div>
@@ -33,10 +35,11 @@
             {% if teach.tea_name == None %}
             <input type="text" class="form-control" name="tea_name" id="exampleInputEmail1" value="" style="width:75%">
             {% else %}
-            <input type="text" class="form-control" name="tea_name" id="exampleInputEmail1" value="{{ teach.tea_name }}" style="width:75%" onfocus=this.blur()>
+            <input type="text" class="form-control" name="tea_name" id="disabledTextInput" value="{{ teach.tea_name }}" style="width:75%" placeholder="Disabled input">
             {% endif %}
         </div>
         </div>
+    </fieldset>
 
 		<div class="form-group">
         	<label for="inputEmail1" class="col-sm-2 control-label">职称</label>
