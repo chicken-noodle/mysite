@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 
 import os
 
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -127,9 +128,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'static').replace('\\', '/'),
     #资源地址
 ]
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'static\\media\\')
-MEDIA_URL = 'static/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'static\\media\\').replace('\\', '/')
+MEDIA_URL = '/media/'

@@ -30,13 +30,15 @@ def login(request):
 				if user.psword == t_psword:
 					request.session['is_login'] = True
 					request.session['user_number'] = user.account
-					#print(user.have_login)
+					request.session['user_power'] = user.jurisdiction
+					#print(request.session['user_power'])
+					#print(type(request.session['user_power']))
 					#初次登录需要修改个人信息
 					#学生
-					if user.have_login == '0' and user.jurisdiction == '1':
+					if user.have_alter == '0' and user.jurisdiction == '1':
 						return redirect('/alter_info_stu')
 					#指导老师
-					if user.have_login == '0' and user.jurisdiction == '2':
+					if user.have_alter == '0' and user.jurisdiction == '2':
 						return redirect('/alter_info_teach')
 					return redirect('/home')
 				else:
@@ -78,24 +80,23 @@ def alter_info_stu(request):
 		grade = request.POST.get('grade')
 		stu_class = request.POST.get('stu_class')
 		ID_number = request.POST.get('ID_number')
-		print(ID_number)
 
 		if ID_number == None or ID_number == "" :
 			context['message'] = "请务必填写身份证号！"
-			return render(request,'alter_info_stu.html',context)
+			return render(request,'alter_info/alter_info_stu.html',context)
 
 		bank_number = request.POST.get('bank_number')
 		phone_number = request.POST.get('phone_number')
 
 		if phone_number == None or phone_number == "":
 			context['message'] = "请务必填写手机号码！"
-			return render(request,'alter_info_stu.html',context)
+			return render(request,'alter_info/alter_info_stu.html',context)
 
 		email = request.POST.get('email')
 
 		if email == None or email == "":
 			context['message'] = "请务必填写邮箱！"
-			return render(request,'alter_info_stu.html',context)
+			return render(request,'alter_info/alter_info_stu.html',context)
 
 		photo = request.FILES.get("photo")
 		#print(photo)
@@ -113,7 +114,7 @@ def alter_info_stu(request):
 		stu_info.phone_number = phone_number
 		stu_info.email = email
 		if photo != None:
-			stu_info.photo = photo.name 
+			stu_info.photo = "stu_photo\\" + nid + "\\" + photo.name
 			url = settings.MEDIA_ROOT + 'stu_photo\\'+nid
 			#判断路径是否存在
 			isExists=os.path.exists(url)
@@ -125,15 +126,15 @@ def alter_info_stu(request):
 
 		stu_info.save()
 		#更改修改状态
-		"""
-		user_login = get_object_or_404(models.user_login_info,account=stu_number)
-		user_login.have_login = 1
-		user_login.have_alter = 1
+
+		user_login = get_object_or_404(models.user_login_info,account=request.session['user_number'])
+		user_login.have_login = '1'
+		user_login.have_alter = '1'
 		user_login.save()
-		"""
+
 		return redirect('/home/')  
 	#stu_info = stu_basic_Form()
-	return render(request,'alter_info_stu.html',context)
+	return render(request,'alter_info/alter_info_stu.html',context)
 """
 		cnt = 0
 		for f in photo:
@@ -186,15 +187,15 @@ def alter_info_teach(request):
 
 		if ID_number == 'None' or ID_number == "":
 			context['message'] = "请务必填写身份证号！"
-			return render(request,'alter_info_teach.html',context)
+			return render(request,'alter_info/alter_info_teach.html',context)
 
 		if phone_number == 'None' or phone_number == "":
 			context['message'] = "请务必填写手机号码！"
-			return render(request,'alter_info_teach.html',context)
+			return render(request,'alter_info/alter_info_teach.html',context)
 
 		if email == 'None' or email == "":
 			context['message'] = "请务必填写邮箱！"
-			return render(request,'alter_info_teach.html',context)
+			return render(request,'alter_info/alter_info_teach.html',context)
 
 		photo = request.FILES.get("photo")
 		#print(photo)
@@ -230,17 +231,38 @@ def alter_info_teach(request):
 		"""
 		return redirect('/home/')  
 
-	return render(request,'alter_info_teach.html',context)
+	return render(request,'alter_info/alter_info_teach.html',context)
 
 def com_list(request):
 	context = {}
+	#没有登录或者还未修改个人信息都无法报名
+	try:
+		is_login = request.session['is_login']
+	except KeyError:
+		context['have_login'] = "赶紧登录啦 :("
+	else:
+		user_num = request.session['user_number']
+		user_info = get_object_or_404(models.user_login_info, account=user_num)
+		if user_info.have_alter == '0':
+			context['have_alter'] = "客官还没确认个人信息啦 :( 赶紧滚去修改"
+
 	com_basic_info = models.com_basic_info.objects.all()
 	context['com_list'] = com_basic_info
-
 	return render(request, 'com_list.html',context)
 
 def com_detail(request):
 	context = {}
+	# 没有登录或者还未修改个人信息都无法报名
+	try:
+		is_login = request.session['is_login']
+	except KeyError:
+		return redirect("/com_list/")
+	else:
+		user_num = request.session['user_number']
+		user_info = get_object_or_404(models.user_login_info, account=user_num)
+		if user_info.have_alter == '0':
+			return redirect("/com_list/")
+
 	if request.method == 'GET':
 		id = request.GET.get('id')
 		#print(id)
@@ -491,3 +513,19 @@ def com_apply_second(request):
 				teach.save()
 
 	return render(request, 'com_apply/com_apply_complete.html', context)
+
+def personal_center_stu(request):
+	context = {}
+	#获取标签
+	tag = request.GET.get('tag')
+	#获取图片
+	stu_info = get_object_or_404(models.stu_basic_info, stu_number=request.session['user_number'])
+	img_path = stu_info.photo
+	context['photo'] = img_path
+	if tag == '1':
+		return render(request, 'personal_center_stu/message.html', context)
+	if tag == '2':
+		return render(request, 'personal_center_stu/competition.html', context)
+	if tag == '3':
+		return render(request, 'personal_center_stu/awards.html', context)
+	return render(request, 'personal_center_stu/overview.html', context)
