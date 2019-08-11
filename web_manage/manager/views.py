@@ -40,6 +40,8 @@ def login(request):
 					#指导老师
 					if user.have_alter == '0' and user.jurisdiction == '2':
 						return redirect('/alter_info_teach')
+					if user.have_alter == '0' and user.jurisdiction == '3':
+						return redirect('/alter_info_teach')
 					return redirect('/home')
 				else:
 					message = "密码不正确！"
@@ -160,7 +162,7 @@ def alter_info_stu(request):
 				for chunk in f.chunks():
 					photo_url.write(chunk)
 """
-
+#教师修改个人信息
 def alter_info_teach(request):
 	context = {}
 	nid = request.session.get('user_number',None)
@@ -223,16 +225,15 @@ def alter_info_teach(request):
 
 		tea_info.save()
 		#更改修改状态
-		"""
-		user_login = get_object_or_404(models.user_login_info,account=tea_number)
-		user_login.have_login = 1
-		user_login.have_alter = 1
+		user_login = get_object_or_404(models.user_login_info,account=request.session['user_number'])
+		user_login.have_login = '1'
+		user_login.have_alter = '1'
 		user_login.save()
-		"""
+
 		return redirect('/home/')  
 
 	return render(request,'alter_info/alter_info_teach.html',context)
-
+#竞赛列表
 def com_list(request):
 	context = {}
 	#没有登录或者还未修改个人信息都无法报名
@@ -249,7 +250,7 @@ def com_list(request):
 	com_basic_info = models.com_basic_info.objects.all()
 	context['com_list'] = com_basic_info
 	return render(request, 'com_list.html',context)
-
+#竞赛详情
 def com_detail(request):
 	context = {}
 	# 没有登录或者还未修改个人信息都无法报名
@@ -273,9 +274,10 @@ def com_detail(request):
 		context['flow'] = str("报名流程")
 		context['com_info'] = com_info
 	return render(request, 'com_detail.html', context)
-
+#报名参加比赛第一步
 def com_apply_first(request):
 	context = {}
+
 	if request.method == 'GET':
 		id = request.GET.get('id')
 		#获取竞赛组别信息
@@ -340,6 +342,42 @@ def com_apply_first(request):
 				stu_info_list.append(name)
 
 		#判断是否符合条件，不符合则跳回first页面
+
+		#判断是够重复报名
+		flag = 1
+		if flag_same == 0:
+			for stu in stu_info_list:
+				com_list = models.com_stu_info.objects.filter(stu_id=stu)
+				for com in com_list:
+					if com.com_id == com_info:
+						flag = 0
+						break
+		elif flag_same == 1:
+			num = 1
+			for stu in stu_info_list:
+				com_list = models.com_stu_info.objects.filter(stu_id=stu)
+				if num == 1:
+					for com in com_list:
+						if com.com_id == com_info:
+							flag = 0
+							break
+				else:
+					for com in com_list:
+						if com.is_leader == 1:
+							flag = 0
+							break
+				num = num + 1
+		if flag == 0:
+			# 回到first页面
+			context['message'] = '参赛成员不符合规定哦 :('
+			context['com_info'] = com_info
+			context['info_list'] = info_list
+			context['group_list'] = group_list
+			context['tea_num'] = range(1, info_list.tea_num + 1)
+			num = com_info.num_stu
+			context['stu_num'] = range(1, num + 1)
+			return render(request, 'com_apply/com_apply_first.html', context)
+
 		#判断满员
 		len_stu = len(stu_info_list)
 		if flag_full == 1:
@@ -353,20 +391,19 @@ def com_apply_first(request):
 				num = com_info.num_stu
 				context['stu_num'] = range(1, num + 1)
 				return render(request, 'com_apply/com_apply_first.html', context)
-		#判断重复
-		if flag_same == 0:
-			list1 = stu_info_list
-			list2 = list(set(list1))
-			if len(list1) != len(list2):
-				# 回到first页面
-				context['message'] = '有重复人员的哦 :('
-				context['com_info'] = com_info
-				context['info_list'] = info_list
-				context['group_list'] = group_list
-				context['tea_num'] = range(1, info_list.tea_num + 1)
-				num = com_info.num_stu
-				context['stu_num'] = range(1, num + 1)
-				return render(request, 'com_apply/com_apply_first.html', context)
+		#判断学号重复
+		list1 = stu_info_list
+		list2 = list(set(list1))
+		if len(list1) != len(list2):
+			# 回到first页面
+			context['message'] = '有重复人员的哦 :('
+			context['com_info'] = com_info
+			context['info_list'] = info_list
+			context['group_list'] = group_list
+			context['tea_num'] = range(1, info_list.tea_num + 1)
+			num = com_info.num_stu
+			context['stu_num'] = range(1, num + 1)
+			return render(request, 'com_apply/com_apply_first.html', context)
 		#判断作品名称是否为空
 		if flag_proname == 1:
 			prodect_name = request.POST.get('product_name')
@@ -436,7 +473,7 @@ def com_apply_first(request):
 		return render(request, 'com_apply/com_apply_second.html', context)
 
 	return render(request, 'com_apply/com_apply_first.html', context)
-
+#报名参加比赛第二步
 def com_apply_second(request):
 	context = {}
 	if request.method == 'POST':
@@ -490,11 +527,15 @@ def com_apply_second(request):
 		com_group.save()
 		group_id = com_group.group_id
 		# 保存小组成员信息
+		number = 1
 		for i in stu_info_list:
 			stu = models.com_stu_info()
 			stu.com_id = get_object_or_404(models.com_basic_info, com_id=id)
 			stu.group_id = get_object_or_404(models.com_group_basic_info, group_id=group_id)
 			stu.stu_id = i
+			if number == 1:
+				stu.is_leader = 1
+			number += 1
 			stu.save()
 
 		teach_list = []
@@ -513,7 +554,7 @@ def com_apply_second(request):
 				teach.save()
 
 	return render(request, 'com_apply/com_apply_complete.html', context)
-
+#学生个人中心
 def personal_center_stu(request):
 	context = {}
 	#获取标签
@@ -521,11 +562,196 @@ def personal_center_stu(request):
 	#获取图片
 	stu_info = get_object_or_404(models.stu_basic_info, stu_number=request.session['user_number'])
 	img_path = stu_info.photo
+	context['stu_name'] = stu_info.stu_name
+	context['stu_num'] = stu_info.stu_number
 	context['photo'] = img_path
-	if tag == '1':
-		return render(request, 'personal_center_stu/message.html', context)
 	if tag == '2':
-		return render(request, 'personal_center_stu/competition.html', context)
-	if tag == '3':
-		return render(request, 'personal_center_stu/awards.html', context)
+		apply_list = models.com_stu_info.objects.filter(stu_id=stu_info.stu_number)
+		com_list = []
+		teach_list = []
+		group_list = []
+		for apply in apply_list:
+			group_list.append(apply.group_id)
+			com = get_object_or_404(models.com_basic_info,com_id=apply.com_id.com_id)
+			com_list.append(com)
+			teach_info = models.com_teach_info.objects.filter(com_id=com.com_id,group_id=apply.group_id)
+			temp = []
+			for teach in teach_info:
+				teach = get_object_or_404(models.teach_basic_info,tea_number=teach.teach_id.tea_number)
+				temp.append(teach)
+			teach_list.append(temp)
+		apply_info = zip(com_list,teach_list,group_list)
+		context['apply_info'] = apply_info
+		return render(request, 'personal_center_stu/my_apply.html', context)
+
 	return render(request, 'personal_center_stu/overview.html', context)
+#学生个人中心-竞赛详情
+def apply_detail(request):
+	context = {}
+	com_id = request.GET.get('p1')
+	group_id = request.GET.get('p2')
+	stu_info = get_object_or_404(models.stu_basic_info, stu_number=request.session['user_number'])
+	img_path = stu_info.photo
+	context['stu_name'] = stu_info.stu_name
+	context['stu_num'] = stu_info.stu_number
+	context['photo'] = img_path
+	#获取竞赛报名所需信息
+	info_list = get_object_or_404(models.com_need_info,com_id=com_id)
+	#获取竞赛id和小组id，通过这两个id确定具体比赛具体小组
+	com_info = get_object_or_404(models.com_basic_info,com_id=com_id)
+	group_info = get_object_or_404(models.com_group_basic_info,group_id=group_id)
+
+	stu_list = []
+	stu_id_list = models.com_stu_info.objects.filter(group_id=group_info,com_id=com_info)
+	for stu_info in stu_id_list:
+		temp = get_object_or_404(models.stu_basic_info,stu_number=stu_info.stu_id.stu_number)
+		stu_list.append((temp))
+
+	teach_list = []
+	teach_id_list = models.com_teach_info.objects.filter(group_id=group_info,com_id=com_info)
+	for teach_info in teach_id_list:
+		temp = get_object_or_404(models.teach_basic_info,tea_number=teach_info.teach_id.tea_number)
+		teach_list.append(temp)
+
+	com_group = models.com_group_basic_info.objects.filter(group_id=int(group_id),com_id=com_info)
+	for competition in com_group:
+		com_group_info = competition
+
+	context['stu_list'] = stu_list
+	context['info_list'] = info_list
+	context['teach_list'] = teach_list
+	context['com_group_info'] = com_group_info
+
+	return render(request,"personal_center_stu/apply_detail.html",context)
+#学生个人中心-撤销报名
+def delete_apply(request):
+	context = {}
+	stu_info = get_object_or_404(models.stu_basic_info, stu_number=request.session['user_number'])
+	img_path = stu_info.photo
+	context['stu_name'] = stu_info.stu_name
+	context['stu_num'] = stu_info.stu_number
+	context['photo'] = img_path
+
+	com_id = request.GET.get('p1')
+	group_id = request.GET.get('p2')
+	com_info = get_object_or_404(models.com_basic_info, com_id=com_id)
+	group_info = get_object_or_404(models.com_group_basic_info, group_id=group_id)
+
+	stu_id_list = models.com_stu_info.objects.filter(group_id=group_info, com_id=com_info)
+	stu_id_list.delete()
+
+	teach_id_list = models.com_teach_info.objects.filter(group_id=group_info, com_id=com_info)
+	teach_id_list.delete()
+
+	com_group = models.com_group_basic_info.objects.filter(group_id=int(group_id), com_id=com_info)
+	com_group.delete()
+
+	return redirect('/personal_center_stu/')
+#教师个人中心
+def personal_center_teach(request):
+	context = {}
+	teach_id = request.session['user_number']
+	#获取教师信息
+	teach_info = get_object_or_404(models.teach_basic_info,tea_number=teach_id)
+	#获取教师竞赛消息
+	teach_com_list = models.com_teach_info.objects.filter(teach_id=teach_info)
+
+	com_list = []
+	stu_list = []
+	group_list = []
+
+	for teach in teach_com_list:
+		com = get_object_or_404(models.com_basic_info,com_id=teach.com_id.com_id)
+		temp_group_list = models.com_group_basic_info.objects.filter(group_id=teach.group_id.group_id,com_id=teach.com_id)
+		for group in temp_group_list:
+			group_list.append(group)
+		temp_stu_list = models.com_stu_info.objects.filter(group_id=teach.group_id,com_id=teach.com_id)
+		temp_list = []
+		for stu in temp_stu_list:
+			stu_info = get_object_or_404(models.stu_basic_info,stu_number=stu.stu_id.stu_number)
+			temp_list.append(stu_info)
+		stu_list.append(temp_list)
+		com_list.append(com)
+	"""
+	print(com_list)
+	print(stu_list)
+	print(group_list)
+	"""
+	info_list = zip(com_list,stu_list,group_list)
+	context['info_list'] = info_list
+	return render(request,'personal_center_teach/index.html',context)
+#教师个人中心-驳回报名
+def reject_apply(request):
+	context = {}
+
+	com_id = request.GET.get('p1')
+	group_id = request.GET.get('p2')
+	com_info = get_object_or_404(models.com_basic_info, com_id=com_id)
+	group_info = get_object_or_404(models.com_group_basic_info, group_id=group_id)
+
+	stu_id_list = models.com_stu_info.objects.filter(group_id=group_info, com_id=com_info)
+	stu_id_list.delete()
+
+	teach_id_list = models.com_teach_info.objects.filter(group_id=group_info, com_id=com_info)
+	teach_id_list.delete()
+
+	com_group = models.com_group_basic_info.objects.filter(group_id=int(group_id), com_id=com_info)
+	com_group.delete()
+
+	return redirect('/personal_center_teach/')
+#教师个人中心-竞赛详情
+def teach_apply_deatil(request):
+	context = {}
+	com_id = request.GET.get('p1')
+	group_id = request.GET.get('p2')
+	# 获取竞赛报名所需信息
+	info_list = get_object_or_404(models.com_need_info, com_id=com_id)
+	# 获取竞赛id和小组id，通过这两个id确定具体比赛具体小组
+	com_info = get_object_or_404(models.com_basic_info, com_id=com_id)
+	group_info = get_object_or_404(models.com_group_basic_info, group_id=group_id)
+
+	stu_list = []
+	stu_id_list = models.com_stu_info.objects.filter(group_id=group_info, com_id=com_info)
+	for stu_info in stu_id_list:
+		temp = get_object_or_404(models.stu_basic_info, stu_number=stu_info.stu_id.stu_number)
+		stu_list.append((temp))
+
+	teach_list = []
+	teach_id_list = models.com_teach_info.objects.filter(group_id=group_info, com_id=com_info)
+	for teach_info in teach_id_list:
+		temp = get_object_or_404(models.teach_basic_info, tea_number=teach_info.teach_id.tea_number)
+		teach_list.append(temp)
+
+	com_group = models.com_group_basic_info.objects.filter(group_id=int(group_id), com_id=com_info)
+	for competition in com_group:
+		com_group_info = competition
+
+	context['stu_list'] = stu_list
+	context['info_list'] = info_list
+	context['teach_list'] = teach_list
+	context['com_group_info'] = com_group_info
+	return render(request, "personal_center_teach/apply_detail.html", context)
+#学科委员-比赛管理
+def com_manage(request):
+	context = {}
+	com_list = models.com_basic_info.objects.filter()
+
+	context['com_list'] = com_list
+	return render(request,'personal_center_teach/com_management.html',context)
+#学科委员-设置竞赛状态
+def set_com_status(request):
+	if request.method == "POST":
+		context = {}
+		com_id = request.GET.get('p')
+		com = get_object_or_404(models.com_basic_info, com_id=com_id)
+		status = request.POST.get('status')
+		if status != None:
+			com.com_status = status
+			com.save()
+	return redirect('/com_manage/')
+#学科委员—增加比赛
+def add_com(request):
+	context = {}
+	if request.method == "POST":
+
+	return render(request,'personal_center_teach/add_com.html',context)

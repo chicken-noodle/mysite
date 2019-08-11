@@ -25,12 +25,26 @@ urlpatterns = [
     path('home/', views.home),
     path('login/', views.login),
     path('logout/', views.logout),
+    #修改信息
     path('alter_info_stu/', views.alter_info_stu),
     path('alter_info_teach/', views.alter_info_teach),
+    #竞赛报名
     path('com_list/', views.com_list),
     path('com_detail/', views.com_detail),
     path('com_apply_first/', views.com_apply_first),
     path('com_apply_second/', views.com_apply_second),
+    #学生个人中心
     path('personal_center_stu/',views.personal_center_stu),
+    path('apply_detail/',views.apply_detail),
+    path('delete_apply/',views.delete_apply),
+    #知道教师个人中心
+    path('personal_cnter_teach/',views.personal_center_teach),
+    path('reject_apply/',views.reject_apply),
+    path('teach_apply_deatil/',views.teach_apply_deatil),
+    #竞赛委员
+    path('com_manage/',views.com_manage),
+    path('set_com_status/',views.set_com_status),
+    path('add_com/',views.add_com),
+    #静态资源
     re_path(r'^media/(?P<path>.*)$', serve, {"document_root": settings.MEDIA_ROOT}),
 ]

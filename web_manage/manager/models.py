@@ -74,6 +74,7 @@ class com_basic_info(models.Model):
 	com_web = models.CharField(max_length=225, null=True, blank=True)
 	if_web = models.IntegerField(default=0)
 	num_teach = models.IntegerField(default=1)
+	com_status = models.IntegerField(default=0)
 
 #竞赛小组信息
 class com_group_basic_info(models.Model):
@@ -81,7 +82,7 @@ class com_group_basic_info(models.Model):
 	com_id = models.ForeignKey('com_basic_info', to_field='com_id', on_delete=models.DO_NOTHING,default='')
 	group_name = models.CharField(max_length=25,null=True, blank=True)
 	group_num = models.IntegerField(default=1)
-	com_group = models.ForeignKey('com_sort_info', to_field='sort_name', on_delete=models.DO_NOTHING,default='')
+	com_group = models.ForeignKey('com_sort_info', to_field='id', on_delete=models.DO_NOTHING,default='')
 	product_name = models.CharField(max_length=50,null=True, blank=True)
 	else_info = models.TextField(default='',null=True, blank=True)
 
@@ -90,8 +91,7 @@ class com_stu_info(models.Model):
 	com_id = models.ForeignKey('com_basic_info', to_field='com_id', on_delete=models.DO_NOTHING)
 	group_id = models.ForeignKey('com_group_basic_info', to_field='group_id', on_delete=models.DO_NOTHING)
 	stu_id = models.ForeignKey('stu_basic_info', to_field='stu_number', on_delete=models.DO_NOTHING)
-	else_info = models.TextField()
-
+	is_leader = models.BooleanField(default=0)
 
 #竞赛指导老师信息
 class com_teach_info(models.Model):
@@ -101,8 +101,9 @@ class com_teach_info(models.Model):
 
 #竞赛组别信息
 class com_sort_info(models.Model):
+	id = models.AutoField(primary_key=True)
 	com_id = models.ForeignKey('com_basic_info', to_field='com_id', on_delete=models.DO_NOTHING)
-	sort_name = models.CharField(max_length=50, unique=True)
+	sort_name = models.CharField(max_length=50)
 
 #竞赛报名表所需信息信息
 class com_need_info(models.Model):
@@ -123,5 +124,11 @@ class com_need_info(models.Model):
 	tea_num = models.IntegerField(default=0)
 	bank_number = models.BooleanField(default=0)
 	else_info = models.BooleanField(default=0)
+
+#关注比赛表
+class stu_fllow_com_info(models.Model):
+	stu_id = models.ForeignKey('stu_basic_info', to_field='stu_number', on_delete=models.DO_NOTHING)
+	com_id = models.ForeignKey('com_basic_info', to_field='com_id', on_delete=models.DO_NOTHING)
+	status = models.BooleanField(default=0)
 
 
