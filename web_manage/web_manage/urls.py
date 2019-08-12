@@ -45,6 +45,7 @@ urlpatterns = [
     path('com_manage/',views.com_manage),
     path('set_com_status/',views.set_com_status),
     path('add_com/',views.add_com),
+    path('add_com_complete/',views.add_com_complete),
     #静态资源
     re_path(r'^media/(?P<path>.*)$', serve, {"document_root": settings.MEDIA_ROOT}),
 ]

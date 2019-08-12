@@ -62,7 +62,7 @@ class teach_basic_info(models.Model):
 #竞赛基本信息
 class com_basic_info(models.Model):
 	com_id = models.AutoField(primary_key=True)
-	com_name = models.CharField(max_length=50)
+	com_name = models.CharField(max_length=50,unique=True)
 	begin_regit = models.DateTimeField(auto_now=False, auto_now_add=False, null=True, blank=True)
 	end_regit = models.DateTimeField(auto_now=False, auto_now_add=False, null=True, blank=True)
 	begin_time = models.DateTimeField(auto_now=False, auto_now_add=False, null=True, blank=True)
@@ -75,6 +75,12 @@ class com_basic_info(models.Model):
 	if_web = models.IntegerField(default=0)
 	num_teach = models.IntegerField(default=1)
 	com_status = models.IntegerField(default=0)
+
+class com_publish_info(models.Model):
+	com_id = models.ForeignKey(com_basic_info, to_field='com_id', on_delete=models.DO_NOTHING)
+	apply_announce = models.TextField(null=True, blank=True)
+	apply_step = models.TextField(null=True, blank=True)
+	com_attachment = models.FileField(upload_to='com_attach', null=True, blank=True)
 
 #竞赛小组信息
 class com_group_basic_info(models.Model):

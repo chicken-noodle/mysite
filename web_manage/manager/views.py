@@ -753,5 +753,185 @@ def set_com_status(request):
 def add_com(request):
 	context = {}
 	if request.method == "POST":
+		#竞赛信息
+		name = request.POST.get('com_name')
+		context['name'] = name
 
-	return render(request,'personal_center_teach/add_com.html',context)
+		begin_regit = request.POST.get('begin_regit')
+		context['begin_regit'] = begin_regit
+
+		end_regit = request.POST.get('end_regit')
+		context['end_regit'] = end_regit
+
+		begin_time = request.POST.get('begin_time')
+		context['begin_time'] = begin_time
+
+		end_time = request.POST.get('end_time')
+		context['end_time'] = end_time
+
+		context['if_com_sort'] = request.POST.get('if_com_sort')
+		if request.POST.get('if_com_sort') == '1':
+			sort_list = request.POST.get('sort_list')
+			context['sort_list'] = sort_list
+
+		context['if_if_web'] = request.POST.get('if_if_web')
+		if request.POST.get('if_if_web'):
+			com_web = request.POST.get('com_web')
+			context['com_web'] = com_web
+
+		num_teach = request.POST.get('num_teach')
+		context['num_teach'] = num_teach
+
+		num_stu = request.POST.get('num_stu')
+		context['num_stu'] = num_stu
+
+		need_full = request.POST.get('need_full', '0')
+		context['need_full'] = need_full
+
+		same_stu = request.POST.get('same_stu', '0')
+		context['same_stu'] = same_stu
+
+		#学生信息
+		stu_num = request.POST.get('stu_num', '0')
+		context['stu_num'] = stu_num
+
+		stu_name = request.POST.get('stu_name', '0')
+		context['stu_name'] = stu_name
+
+		ID_number = request.POST.get('ID_number', '0')
+		context['ID_number'] = ID_number
+
+		sex = request.POST.get('sex', '0')
+		context['sex'] = sex
+
+		depart = request.POST.get('depart', '0')
+		context['depart'] = depart
+
+		major = request.POST.get('major', '0')
+		context['major'] = major
+
+		grade = request.POST.get('grade', '0')
+		context['grade'] = grade
+
+		stu_class = request.POST.get('stu_class', '0')
+		context['stu_class'] = stu_class
+
+		email = request.POST.get('email', '0')
+		context['email'] = email
+
+		phone_num = request.POST.get('phone_num', '0')
+		context['phone_num'] = phone_num
+
+		bank_number = request.POST.get('bank_number', '0')
+		context['bank_number'] = bank_number
+
+		else_info = request.POST.get('else_info', '0')
+		context['else_info'] = else_info
+
+		#竞赛小组信息
+		group_name = request.POST.get('group_name', '0')
+		context['group_name'] = group_name
+
+		product_name = request.POST.get('product_name', '0')
+		context['product_name'] = product_name
+
+		return render(request, 'personal_center_teach/add_com/second.html', context)
+	return render(request,'personal_center_teach/add_com/first.html',context)
+
+def add_com_complete(request):
+	context = {}
+	if request.method == "POST":
+		#竞赛信息
+		name = request.POST.get('com_name')
+		begin_regit = request.POST.get('begin_regit')
+		end_regit = request.POST.get('end_regit')
+		begin_time = request.POST.get('begin_time')
+		end_time = request.POST.get('end_time')
+		sort_list = request.POST.get('sort_list','0')
+		com_web = request.POST.get('com_web','0')
+		num_teach = request.POST.get('num_teach')
+		num_stu = request.POST.get('num_stu')
+		need_full = request.POST.get('need_full', '0')
+		same_stu = request.POST.get('same_stu', '0')
+
+		#学生信息
+		stu_num = request.POST.get('stu_num', '0')
+		stu_name = request.POST.get('stu_name', '0')
+		ID_number = request.POST.get('ID_number', '0')
+		sex = request.POST.get('sex', '0')
+		depart = request.POST.get('depart', '0')
+		major = request.POST.get('major', '0')
+		grade = request.POST.get('grade', '0')
+		stu_class = request.POST.get('stu_class', '0')
+		email = request.POST.get('email', '0')
+		phone_num = request.POST.get('phone_num', '0')
+		bank_number = request.POST.get('bank_number', '0')
+		else_info = request.POST.get('else_info', '0')
+
+		#竞赛小组信息
+		group_name = request.POST.get('group_name', '0')
+		product_name = request.POST.get('product_name', '0')
+
+		#附件
+		com_attach = request.FILES.get("com_attach", None)
+
+		#报名步骤
+		step = request.POST.get('step')
+		context['step'] = step
+
+		#竞赛基本信息
+		com_info = models.com_basic_info()
+		com_info.com_name = name
+		com_info.begin_regit = begin_regit
+		com_info.end_regit = end_regit
+		com_info.begin_time = begin_time
+		com_info.end_time = end_time
+		com_info.num_stu = num_stu
+		if need_full == '1':
+			com_info.need_full = 1
+		else:
+			com_info.need_full = 0
+		if same_stu == '1':
+			com_info.same_stu = 1
+		else:
+			com_info.same_stu = 0
+		if sort_list != '0':
+			list = sort_list.split("/")
+			com_info.com_sort_num = len(list)
+		if com_web != '0':
+			com_info.if_web = 1
+			com_info.com_web = com_web
+		com_info.num_teach = num_teach
+		com_info.com_status = 0
+		com_info.save()
+
+		if sort_list != '0':
+			list = sort_list.split("/")
+			for sort in list:
+				sort_info = models.com_sort_info.objects.create(com_id=com_info, sort_name=sort)
+
+		com_need = models.com_need_info()
+		com_need.com_id = com_info.com_id
+		com_need.stu_num = int(stu_num)
+		com_need.stu_name = int(stu_name)
+		com_need.ID_number = int(ID_number)
+		com_need.sex = int(sex)
+		com_need.depart = int(depart)
+		com_need.major = int(major)
+		com_need.grade = int(grade)
+		com_need.stu_class = int(stu_class)
+		com_need.email = int(email)
+		com_need.phone_num = int(phone_num)
+		if sort_list != '0':
+			com_need.com_group = int(1)
+		else:
+			com_need.com_group = int(0)
+		com_need.group_name = int(group_name)
+		com_need.product_name = int(product_name)
+		com_need.tea_num = int(num_teach)
+		com_need.bank_number = int(bank_number)
+		com_need.else_info = int(else_info)
+		com_need.save()
+
+		return redirect('/com_manage/')
+	return render(request, 'personal_center_teach/add_com/second.html', context)
