@@ -908,11 +908,13 @@ def com_edit(request):
 		com_info.com_status = 0
 		com_info.save()
 
+		"""
 		if sort_list != '0':
 			list = sort_list.split("/")
 			for sort in list:
 				sort_info = models.com_sort_info.objects.filter(com_id=com_info, sort_name=sort)
 				print(sort_info)
+		"""
 
 		com_need = get_object_or_404(models.com_need_info, com_id=com_id)
 		com_need.stu_num = stu_num
