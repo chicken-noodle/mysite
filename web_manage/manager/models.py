@@ -68,14 +68,15 @@ class com_basic_info(models.Model):
 	begin_time = models.DateTimeField(auto_now=False, auto_now_add=False, null=True, blank=True)
 	end_time = models.DateTimeField(auto_now=False, auto_now_add=False, null=True, blank=True)
 	num_stu = models.IntegerField(default=1)
-	need_full = models.IntegerField(default=0)
-	same_stu = models.IntegerField(default=0)
-	com_sort_num = models.IntegerField(default=1)
+	need_full = models.BooleanField(default=0)
+	same_stu = models.BooleanField(default=0)
+	com_sort_num = models.IntegerField(default=0)
 	com_web = models.CharField(max_length=225, null=True, blank=True)
 	if_web = models.IntegerField(default=0)
 	num_teach = models.IntegerField(default=1)
 	com_status = models.IntegerField(default=0)
 
+#竞赛发布信息
 class com_publish_info(models.Model):
 	com_id = models.ForeignKey(com_basic_info, to_field='com_id', on_delete=models.DO_NOTHING)
 	apply_announce = models.TextField(null=True, blank=True)
