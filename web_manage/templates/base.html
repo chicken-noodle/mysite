@@ -1,5 +1,4 @@
 {% load staticfiles %}
-
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -9,18 +8,17 @@
     <!-- 插入标题 -->
     <title>{% block title %}{% endblock %}</title>
     <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css">
-    <link href="{% static 'bootstrap/css/bootstrap-theme.min.css' %}" rel="stylesheet" type="text/css">
     <link href="{% static 'bootstrap/css/jquery.eeyellow.Timeline.css' %}" rel="stylesheet" type="text/css">
     <script type="text/javascript" src="{% static 'jquery-1.12.4.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+    <!-- 插入css -->
+    {% block css %}{% endblock %}
     <style>
         .carousel-inner img {
             width: 100%;
             height: 100%;
         }
     </style>
-    <!-- 插入css -->
-    {% block css %}{% endblock %}
 </head>
 
 <body>
@@ -167,33 +165,36 @@
                         </div>
                     </div>
                 {% endif %}
-
-                <script>
-                    $(document).ready(function () {
-                        $("#conbtn").click(function () {
-                            $("#cebian").toggle(100);
-                        });
-                    });
-                </script>
-
-                <nav id="cebian" class="navbar-left"
-                     style="background-color: white;width: 10%; position: fixed;z-index: 2;padding: 0 0 5% 2%;overflow: auto;top:50px;border: solid rgb(240,240,240) 3px;height: 100%; display: none;">
-                    <h2>导航栏</h2>
-                    <div>
-                        这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>
-                        这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>
-                        这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能
-                    </div>
-                </nav>
-
             </ul>
         </div>
+    </div>
+</nav>
+<script>
+    $(document).ready(function () {
+        $("#conbtn").click(function () {
+            $("#cebian").toggle(100);
+        });
+    });
+</script>
+
+<nav id="cebian" class="navbar-left"
+     style="background-color: white;width: 15%; position: fixed;z-index: 2;padding: 0 0 5% 2%;overflow: auto;top:50px;border: solid rgb(240,240,240) 3px;height: 100%; display: none;">
+    <h2>导航栏</h2>
+    <div>
+        这个功能<br>这个功能<br>这个功能
     </div>
 </nav>
 <!--  正文 -->
 {% block content %}{% endblock %}
 
+
+<footer class="footer navbar navbar-inverse" style="color: white;margin: 0;width: 100%;">
+    <div style="width: 80%;margin: 0 auto;text-align: center;">
+        地址：广东惠州市演达大道46号 邮编：516007<br>
+        总机：0752-2529000 E-mail:webmaster@hzu.edu.cn<br>
+        版权所有©惠州学院 粤ICP备********号
+    </div>
+</footer>
+
 </body>
-
-
 </html>
