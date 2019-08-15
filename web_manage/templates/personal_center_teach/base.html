@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}
+    学科竞赛|个人中心
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-2">
+                <div class="panel panel-default">
+                    <div class="page-header">
+                        <h4>指导教师</h4>
+                    </div>
+                    <div class="list-group">
+                        <a href="/personal_cnter_teach/" class="list-group-item {% block active1 %}{% endblock %}">
+                            参赛小组
+                        </a>
+                        <a href="#" class="list-group-item {% block active2 %}{% endblock %}">
+                            参赛经历
+                        </a>
+                        <a href="#" class="list-group-item {% block active3 %}{% endblock %}">
+                            获奖结果
+                        </a>
+                        <a href="#" class="list-group-item {% block active4 %}{% endblock %}">
+                            指导记录
+                        </a>
+                        <a href="#" class="list-group-item {% block active5 %}{% endblock %}">
+                            个人信息
+                        </a>
+                    </div>
+                    {% if request.session.user_power == '3' %}
+                        <div class="page-header">
+                            <h4>学科竞赛委员</h4>
+                        </div>
+                        <div class="list-group">
+                            <a href="/com_manage/" class="list-group-item {% block active6 %}{% endblock %}">
+                                比赛
+                            </a>
+                            <a href="#" class="list-group-item {% block active7 %}{% endblock %}">
+                                新闻
+                            </a>
+                            <a href="#" class="list-group-item {% block active8 %}{% endblock %}">
+                                奖项
+                            </a>
+                        </div>
+                        <div class="panel panel-default">
+                            <div class="panel-heading" role="tab" id="headingOne">
+                                <h4 class="panel-title">
+                                    <a role="button" data-toggle="collapse" data-parent="#accordion"
+                                       href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                        申请<span class="caret"></span>
+                                    </a>
+                                </h4>
+                            </div>
+                            <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel"
+                                 aria-labelledby="headingOne">
+                                <div class="panel-body">
+                                    <div class="list-group">
+                                        <a href="/com_manage/"
+                                           class="list-group-item {% block active9 %}{% endblock %}">
+                                            个人信息
+                                        </a>
+                                        <a href="#" class="list-group-item {% block active10 %}{% endblock %}">
+                                            比赛信息
+                                        </a>
+                                        <a href="#" class="list-group-item {% block activ11 %}{% endblock %}">
+                                            奖项信息
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-10">
+                <div class="panel panel-default">
+                    {% block body %}
+
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

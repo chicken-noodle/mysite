@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}
+	学科竞赛|修改信息
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-3">
+
+            </div>
+            <div class="col-md-6">
+                <form class="form-horizontal" action="/alter_info_stu/" method="POST" enctype="multipart/form-data">
+
+                    {% if message %}
+                        <div class="alert alert-warning">{{ message }}</div>
+                    {% endif %}
+
+                    {% csrf_token %}
+
+                    <fieldset disabled>
+                        <div class="form-group">
+                            <label for="disabledTextInput" class="col-sm-2 control-label">学号</label>
+                            <div class="col-sm-10">
+                                {% if stu.stu_number == 'None' %}
+                                    <input type="text" class="form-control" name="stu_number" id="exampleInputEmail1"
+                                           value="" style="width:75%">
+                                {% else %}
+                                    <input type="text" class="form-control" name="stu_number" id="disabledTextInput"
+                                           value="{{ stu.stu_number }}" style="width:75%" readonly>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="disabledTextInput" class="col-sm-2 control-label">姓名</label>
+                            <div class="col-sm-10">
+                                {% if stu.stu_name == 'None' %}
+                                    <input type="text" class="form-control" name="stu_name" id="exampleInputEmail1"
+                                           value=""
+                                           style="width:75%">
+                                {% else %}
+                                    <input type="text" class="form-control" name="stu_name" id="disabledTextInput"
+                                           value="{{ stu.stu_name }}" style="width:75%" readonly>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <div class="form-group">
+                        <label for="inputEmail1" class="col-sm-2 control-label">院系</label>
+                        <div class="col-sm-10">
+                            <select name="department" class="form-control" style="width:75%">
+                                {% for depart in depart_info %}
+                                    {% if stu.department.depart_name == depart.depart_name %}
+                                        <option value="{{ depart.depart_name }}"
+                                                selected>{{ depart.depart_name }}</option>
+                                    {% else %}
+                                        <option value="{{ depart.depart_name }}">{{ depart.depart_name }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputEmail1" class="col-sm-2 control-label">专业</label>
+                        <div class="col-sm-10">
+                            <select name="major" class="form-control" style="width:75%">
+                                {% for major in major_info %}
+                                    {% if stu.major.major_name == major.major_name %}
+                                        <option value="{{ major.major_name }}" selected>{{ major.major_name }}</option>
+                                    {% else %}
+                                        <option value="{{ major.major_name }}">{{ major.major_name }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputEmail1" class="col-sm-2 control-label">年级</label>
+                        <div class="col-sm-10">
+                            <select name="grade" class="form-control" style="width:75%">
+                                {% for grade in grade_info %}
+                                    {% if stu.grade.grade_name == grade.grade_name %}
+                                        <option value="{{ grade.grade_name }}" selected>{{ grade.grade_name }}</option>
+                                    {% else %}
+                                        <option value="{{ grade.grade_name }}">{{ grade.grade_name }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputEmail1" class="col-sm-2 control-label">班级</label>
+                        <div class="col-sm-10">
+                            <select name="stu_class" class="form-control" style="width:75%">
+                                {% for class in class_info %}
+                                    {% if stu.stu_class.class_name == class.class_name %}
+                                        <option value="{{ class.class_name }}" selected>{{ class.class_name }}</option>
+                                    {% else %}
+                                        <option value="{{ class.class_name }}">{{ class.class_name }}</option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputEmail1" class="col-sm-2 control-label">身份证号</label>
+                        <div class="col-sm-10">
+                            {% if stu.ID_number == 'None' %}
+                                <input type="text" class="form-control" name="ID_number" id="exampleInputEmail1"
+                                       value=""
+                                       style="width:75%">
+                            {% else %}
+                                <input type="text" class="form-control" name="ID_number" id="exampleInputEmail1"
+                                       value="{{ stu.ID_number }}" style="width:75%">
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputEmail1" class="col-sm-2 control-label">银行卡号</label>
+                        <div class="col-sm-10">
+                            {% if stu.bank_number == 'None' %}
+                                <input type="text" class="form-control" name="bank_number" id="exampleInputEmail1"
+                                       value=""
+                                       style="width:75%">
+                            {% else %}
+                                <input type="text" class="form-control" name="bank_number" id="exampleInputEmail1"
+                                       value="{{ stu.bank_number }}" style="width:75%">
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputEmail1" class="col-sm-2 control-label">手机号码</label>
+                        <div class="col-sm-10">
+                            {% if stu.phone_number == 'None' %}
+                                <input type="text" class="form-control" name="phone_number" id="exampleInputEmail1"
+                                       value=""
+                                       style="width:75%">
+                            {% else %}
+                                <input type="text" class="form-control" name="phone_number" id="exampleInputEmail1"
+                                       value="{{ stu.phone_number }}" style="width:75%">
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="inputEmail1" class="col-sm-2 control-label">邮箱</label>
+                        <div class="col-sm-10">
+                            {% if stu.email == 'None' or stu.email == 'NULL' %}
+                                <input type="text" class="form-control" name="email" id="exampleInputEmail1" value=""
+                                       style="width:75%">
+                            {% else %}
+                                <input type="text" class="form-control" name="email" id="exampleInputEmail1"
+                                       value="{{ stu.email }}"
+                                       style="width:75%">
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="exampleInputFile" class="col-sm-2 control-label"
+                               style="display:inline-block;">照片</label>
+                        <input type="file" name="photo" style="display:inline-block;">
+                        {% if stu.photo != 'None' and stu.photo != '' %}
+                            <p class="help-block" style="display:inline-block;">客官已经上传过图片啦：）</p>
+                        {% else %}
+                            <p class="help-block" style="display:inline-block;">客官还没有上传过图片呢：(</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10" id="exampleInputFile">
+                            <button type="submit" class="btn btn-default">提交</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-3">
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+

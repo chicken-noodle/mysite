@@ -1,0 +1,188 @@
+{% extends 'personal_center_teach/base.html' %}
+{% load staticfiles %}
+
+{% block title %}
+    学科竞赛|个人中心
+{% endblock %}
+
+{% block active6 %}
+    active
+{% endblock %}
+
+{% block body %}
+    <div class="panel-heading">
+        <h3>发布比赛</h3>
+    </div>
+    <div class="panel-body">
+        {% if warn %}
+            <div class="alert alert-warning">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                {{ warn }}
+            </div>
+        {% endif %}
+        <form class="form-horizontal" action="/add_com/" method="POST">
+            {% csrf_token %}
+
+            <div class="row">
+                <h3>竞赛信息</h3>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon2">名称</span>
+                        <input type="text" class="form-control" name="com_name">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon2">报名开始时间</span>
+                        <input type="text" class="form-control" name="begin_regit"
+                               placeholder="YY-MM-DD hh:mm:ss">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon2">报名结束时间</span>
+                        <input type="text" class="form-control" name="end_regit"
+                               placeholder="YY-MM-DD hh:mm:ss">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon2">比赛开始时间</span>
+                        <input type="text" class="form-control" name="begin_time"
+                               placeholder="YY-MM-DD hh:mm:ss">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon2">比赛结束时间</span>
+                        <input type="text" class="form-control" name="end_time"
+                               placeholder="YY-MM-DD hh:mm:ss">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-addon">
+                            <input type="checkbox" name="if_com_sort" value="1">组别
+                          </span>
+                        <input type="text" class="form-control" name="sort_list"
+                               placeholder="XXX组/XXX组/XXX组">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-addon">
+                            <input type="checkbox" name="if_if_web" value="1">官网
+                          </span>
+                        <input type="text" class="form-control" name="com_web"
+                               placeholder="请填写正确网址">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon2">指导教师人数</span>
+                        <input type="text" class="form-control" name="num_teach">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon2">小组人数</span>
+                        <input type="text" class="form-control" name="num_stu">
+                    </div>
+                </div>
+            </div>
+            <div class="form-inline">
+                <div class="checkbox">
+                    <label>
+                        <input name="need_full" type="checkbox" value="1">允许不满员
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <label>
+                        <input name="same_stu" type="checkbox" value="1">允许学生重复参加
+                    </label>
+                </div>
+            </div>
+
+            <div class="row">
+                <h3>学生信息</h3>
+            </div>
+            <div class="form-inline">
+                <div class="col-md-2">
+                    <input type="checkbox" name="stu_num" value="1">学号
+                </div>
+                <div class="col-md-2">
+                    <input type="checkbox" name="stu_name" value="1">姓名
+                </div>
+                <div class="col-md-2">
+                    <input type="checkbox" name="ID_number" value="1">身份证号
+                </div>
+                <div class="col-md-2">
+                    <input type="checkbox" name="sex" value="1">性别
+                </div>
+            </div>
+            <div class="form-inline">
+                <div class="col-md-2">
+                    <input type="checkbox" name="depart" value="1">院系
+                </div>
+                <div class="col-md-2">
+                    <input type="checkbox" name="major" value="1">专业
+                </div>
+                <div class="col-md-2">
+                    <input type="checkbox" name="grade" value="1">年级
+                </div>
+                <div class="col-md-2">
+                    <input type="checkbox" name="stu_class" value="1">班级
+                </div>
+            </div>
+            <div class="form-inline">
+                <div class="col-md-2">
+                    <input type="checkbox" name="email" value="1">邮箱
+                </div>
+                <div class="col-md-2">
+                    <input type="checkbox" name="phone_num" value="1">手机号码
+                </div>
+                <div class="col-md-2">
+                    <input type="checkbox" name="bank_number" value="1">银行卡号
+                </div>
+                <div class="col-md-2">
+                    <input type="checkbox" name="else_info" value="1">其他
+                </div>
+            </div>
+            <div class="row">
+                <h3>竞赛小组信息</h3>
+            </div>
+            <div class="form-inline">
+                <div class="col-md-2">
+                    <input type="checkbox" name="group_name" value="1">小组名称
+                </div>
+                <div class="col-md-2">
+                    <input type="checkbox" name="product_name" value="1">作品名称
+                </div>
+            </div>
+
+            <div class="row">
+            </div>
+
+            <button type="submit" class="btn btn-primary pull-right">下一步</button>
+        </form>
+    </div>
+{% endblock %}
