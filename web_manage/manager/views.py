@@ -1,6 +1,7 @@
 from django.shortcuts import render_to_response, get_object_or_404, redirect, render
 from django.core.paginator import Paginator
 from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponse, Http404, FileResponse
 from django.conf import settings
 import datetime
 from . import models
@@ -285,12 +286,32 @@ def com_detail(request):
 		id = request.GET.get('id')
 		# print(id)
 		com_info = get_object_or_404(models.com_basic_info, com_id=id)
+		com_publish = get_object_or_404(models.com_publish_info, com_id=com_info)
 		# 插入竞赛公告
 		context['inform'] = str("[通知]竞赛通知")
-		# 插入报名流程
-		context['flow'] = str("报名流程")
+		# 插入发布信息
+		context['com_publish'] = com_publish
 		context['com_info'] = com_info
 	return render(request, 'com_detail.html', context)
+
+
+# 下载竞赛附件
+def com_attach_download(request):
+	com_id = request.GET.get('id')
+	com_info = get_object_or_404(models.com_basic_info, com_id=com_id)
+	com_publish = get_object_or_404(models.com_publish_info, com_id=com_info)
+	file_name = com_publish.com_attachment
+	# 返回下载
+	filename = str(com_publish.com_attachment)
+	file_path = settings.MEDIA_ROOT + filename
+	ext = os.path.basename(file_path).split('.')[-1].lower()
+	if ext not in ['py', 'db', 'sqlite3']:
+		response = FileResponse(open(file_path, 'rb'))
+		response['content_type'] = "application/octet-stream"
+		response['Content-Disposition'] = 'attachment; filename=' + os.path.basename(file_path)
+		return response
+	else:
+		raise Http404
 
 
 # 报名参加比赛第一步
@@ -398,9 +419,10 @@ def com_apply_first(request):
 			return render(request, 'com_apply/com_apply_first.html', context)
 
 		# 判断满员
+		student_num = com_info.num_stu
 		len_stu = len(stu_info_list)
 		if flag_full == 1:
-			if len_stu != num:
+			if len_stu != student_num:
 				# 回到first页面
 				context['message'] = '队伍人数不足 :('
 				context['com_info'] = com_info
@@ -789,7 +811,7 @@ def set_com_status(request):
 
 
 # 学科委员-比赛详情
-def com_detail(request):
+def com_detail_manage(request):
 	context = {}
 	com_id = request.GET.get('p')
 	com_info = get_object_or_404(models.com_basic_info, com_id=com_id)
@@ -844,13 +866,16 @@ def com_edit(request):
 		# 竞赛信息
 		name = request.POST.get('com_name')
 		begin_regit = request.POST.get('begin_regit', None)
-		#begin_regit = datetime.strptime(begin_regit, "%Y-%m-%d %H:%M:%S")
+		# begin_regit = datetime.strptime(begin_regit, "%Y-%m-%d %H:%M:%S")
 		end_regit = request.POST.get('end_regit', None)
-		#end_regit = datetime.strptime(end_regit, "%Y-%m-%d %H:%M:%S")
+		# end_regit = datetime.strptime(end_regit, "%Y-%m-%d %H:%M:%S")
 		begin_time = request.POST.get('begin_time', None)
-		#begin_time = datetime.strptime(begin_time, "%Y-%m-%d %H:%M:%S")
+		# begin_time = datetime.strptime(begin_time, "%Y-%m-%d %H:%M:%S")
 		end_time = request.POST.get('end_time', None)
-		#end_time = datetime.strptime(end_time, "%Y-%m-%d %H:%M:%S")
+		# end_time = datetime.strptime(end_time, "%Y-%m-%d %H:%M:%S")
+		if_com_sort = request.POST.get('if_com_sort', '0')
+		print(if_com_sort)
+		print(type(if_com_sort))
 		sort_list = request.POST.get('sort_list', '0')
 		com_web = request.POST.get('com_web', '0')
 		num_teach = request.POST.get('num_teach', '0')
@@ -908,13 +933,14 @@ def com_edit(request):
 		com_info.com_status = 0
 		com_info.save()
 
-		"""
-		if sort_list != '0':
+		# 组别信息
+		if if_com_sort == '1' and sort_list != '0':
+			temp_sort = models.com_sort_info.objects.filter(com_id=com_info)
+			for temp in temp_sort:
+				temp.delete()
 			list = sort_list.split("/")
 			for sort in list:
-				sort_info = models.com_sort_info.objects.filter(com_id=com_info, sort_name=sort)
-				print(sort_info)
-		"""
+				sort_info = models.com_sort_info.objects.create(com_id=com_info, sort_name=sort)
 
 		com_need = get_object_or_404(models.com_need_info, com_id=com_id)
 		com_need.stu_num = stu_num
@@ -939,7 +965,7 @@ def com_edit(request):
 		com_need.save()
 
 		# 还差公告
-		com_publish = get_object_or_404(models.com_publish_info,com_id=com_info)
+		com_publish = get_object_or_404(models.com_publish_info, com_id=com_info)
 		if com_attach != None:
 			com_publish.com_attachment = "com_attach\\" + str(com_info.com_name) + "\\" + com_attach.name
 			url = settings.MEDIA_ROOT + 'com_attach\\' + str(com_info.com_name)
@@ -957,6 +983,10 @@ def com_edit(request):
 		com_publish.save()
 
 		return redirect('/com_manage/')
+
+
+
+
 
 # 学科委员—增加比赛
 def add_com(request):

@@ -2,7 +2,7 @@
 {% load staticfiles %}
 
 {% block title %}
-	学科竞赛|竞赛一览
+    学科竞赛|竞赛一览
 {% endblock %}
 
 {% block is_activate3 %}
@@ -15,7 +15,8 @@
         <p>{{ com_info.com_name }}</p>
 
         {% if com_info.com_status == 0 %}
-            <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+            <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal"
+                    style="display:inline-block;">
                 报名
             </button>
             <!-- Modal -->
@@ -28,7 +29,7 @@
                             <h4 class="modal-title" id="myModalLabel">报名流程</h4>
                         </div>
                         <div class="modal-body">
-                            {{ flow }}
+                            {{ com_publish.apply_step }}
                         </div>
                         <div class="modal-footer">
                             <p><a class="btn btn-primary" href="/com_apply_first?id={{ com_info.com_id }}"
@@ -37,6 +38,8 @@
                     </div>
                 </div>
             </div>
+            <a class="btn btn-primary btn-lg" href="/com_attach_download?id={{ com_info.com_id }}"
+               role="button" style="display:inline-block;">下载附件</a>
         {% else %}
             <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal"
                     disabled="disabled">

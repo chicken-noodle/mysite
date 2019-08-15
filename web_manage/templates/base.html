@@ -8,9 +8,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- 插入标题 -->
     <title>{% block title %}{% endblock %}</title>
-    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'bootstrap/css/bootstrap-theme.min.css' %}" rel="stylesheet" type="text/css">
+    <link href="{% static 'bootstrap/css/jquery.eeyellow.Timeline.css' %}" rel="stylesheet" type="text/css">
     <script type="text/javascript" src="{% static 'jquery-1.12.4.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+    <style>
+        .carousel-inner img {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
     <!-- 插入css -->
     {% block css %}{% endblock %}
 </head>
@@ -27,9 +35,9 @@
                 <span class="icon-bar"></span>
             </button>
             <!-- 弹出侧边栏 -->
-            <button type="button" class="btn btn-default navbar-btn" aria-label="Left Align">
+            <button type="button" class="btn btn-default navbar-btn" aria-label="Left Align" id="conbtn">
                 <span class="glyphicon glyphicon-th" aria-hidden="true"></span>
-            </button>
+            </button>&nbsp;&nbsp;
 
         </div>
 
@@ -158,8 +166,26 @@
                             </div>
                         </div>
                     </div>
-
                 {% endif %}
+
+                <script>
+                    $(document).ready(function () {
+                        $("#conbtn").click(function () {
+                            $("#cebian").toggle(100);
+                        });
+                    });
+                </script>
+
+                <nav id="cebian" class="navbar-left"
+                     style="background-color: white;width: 10%; position: fixed;z-index: 2;padding: 0 0 5% 2%;overflow: auto;top:50px;border: solid rgb(240,240,240) 3px;height: 100%; display: none;">
+                    <h2>导航栏</h2>
+                    <div>
+                        这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>
+                        这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>
+                        这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能<br>这个功能
+                    </div>
+                </nav>
+
             </ul>
         </div>
     </div>

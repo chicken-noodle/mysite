@@ -31,6 +31,7 @@ urlpatterns = [
     #竞赛报名
     path('com_list/', views.com_list),
     path('com_detail/', views.com_detail),
+    path('com_attach_download',views.com_attach_download),
     path('com_apply_first/', views.com_apply_first),
     path('com_apply_second/', views.com_apply_second),
     #学生个人中心
@@ -44,7 +45,7 @@ urlpatterns = [
     #竞赛委员
     path('com_manage/',views.com_manage),
     path('set_com_status/',views.set_com_status),
-    path('com_detail/', views.com_detail),
+    path('com_detail_manage/', views.com_detail_manage),
     path('com_edit/',views.com_edit),
     path('add_com/',views.add_com),
     path('add_com_complete/',views.add_com_complete),
