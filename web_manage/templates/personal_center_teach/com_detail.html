@@ -219,25 +219,6 @@
                 </td>
                 </tbody>
             </table>
-
-            <div class="row">
-                <h3>上传附件</h3>
-            </div>
-            <div class="row">
-                <input type="file" name="com_attach" style="display:inline-block;"/>
-                {% if com_publish.com_attachment %}
-                    <p class="help-block" style="display:inline-block;">客官已经上传过文件啦：）</p>
-                {% else %}
-                    <p class="help-block" style="display:inline-block;">客官还没有上传过文件呢：(</p>
-                {% endif %}
-            </div>
-
-            <div class="row">
-                <h3>报名步骤</h3>
-            </div>
-            <div class="row">
-                <textarea class="form-control" rows="5" name="step">{{ com_publish.apply_step }}</textarea>
-            </div>
         </form>
     </div>
 {% endblock %}
