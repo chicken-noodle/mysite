@@ -975,13 +975,18 @@ def com_edit(request):
 		# 还差公告
 		com_publish = get_object_or_404(models.com_publish_info, com_id=com_info)
 		if com_attach != None:
-			com_publish.com_attachment = "com_attach\\" + str(com_info.com_name) + "\\" + com_attach.name
-			url = settings.MEDIA_ROOT + 'com_attach\\' + str(com_info.com_name)
+			#取出格式名
+			f_name = com_attach.name
+			f_name = f_name.split('.')[-1].lower()
+			#重命名文件
+			com_publish.com_attachment = "com_attach\\" + str(com_info.com_id) + "\\" + str(com_info.com_id) + "." + f_name
+			print(com_publish.com_attachment)
+			url = settings.MEDIA_ROOT + 'com_attach\\' + str(com_info.com_id)
 			# 判断路径是否存在
 			isExists = os.path.exists(url)
 			if not isExists:
 				os.makedirs(url)
-			file_url = open(settings.MEDIA_ROOT + "com_attach\\" + str(com_info.com_name) + "\\" + com_attach.name,
+			file_url = open(settings.MEDIA_ROOT + "com_attach\\" + str(com_info.com_id) + "\\" + str(com_info.com_id) + "." + f_name,
 			                'wb')
 			for chunk in com_attach.chunks():
 				file_url.write(chunk)
@@ -1203,16 +1208,24 @@ def add_com_complete(request):
 		com_need.save()
 
 		# 还差公告
+		# 
+		# ext = os.path.basename(file_path).split('.')[-1].lower()
+		# 
 		com_publish = models.com_publish_info()
 		com_publish.com_id = com_info
 		if com_attach != None:
-			com_publish.com_attachment = "com_attach\\" + str(com_info.com_name) + "\\" + com_attach.name
-			url = settings.MEDIA_ROOT + 'com_attach\\' + str(com_info.com_name)
+			#取出格式名
+			f_name = com_attach.name
+			f_name = f_name.split('.')[-1].lower()
+			#重命名文件
+			com_publish.com_attachment = "com_attach\\" + str(com_info.com_id) + "\\" + str(com_info.com_id) + "." + f_name
+			print(com_publish.com_attachment)
+			url = settings.MEDIA_ROOT + 'com_attach\\' + str(com_info.com_id)
 			# 判断路径是否存在
 			isExists = os.path.exists(url)
 			if not isExists:
 				os.makedirs(url)
-			file_url = open(settings.MEDIA_ROOT + "com_attach\\" + str(com_info.com_name) + "\\" + com_attach.name,
+			file_url = open(settings.MEDIA_ROOT + "com_attach\\" + str(com_info.com_id) + "\\" + str(com_info.com_id) + "." + f_name,
 			                'wb')
 			for chunk in com_attach.chunks():
 				file_url.write(chunk)
