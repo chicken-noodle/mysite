@@ -27,6 +27,12 @@ def login(request):
 		t_psword = request.POST.get('psword', None)
 		context = {}
 		message = "请填写正确的账号和密码！"
+		if t_account == "":
+			context['message'] = "？？？输入账号啊"
+			return render(request, 'login.html', context)
+		if 	t_psword == "":
+			context['message'] = "？？？倒是输密码啊"
+			return render(request, 'login.html', context)
 		if t_account and t_psword:
 			t_account = t_account.strip()
 			try:
@@ -54,7 +60,7 @@ def login(request):
 				message = "账号不存在！"
 		context['message'] = message
 		return render(request, 'home.html', context)
-	return render(request, 'home.html', context)
+	return render(request, 'login.html', context)
 
 
 # 注销
@@ -300,10 +306,12 @@ def com_attach_download(request):
 	com_id = request.GET.get('id')
 	com_info = get_object_or_404(models.com_basic_info, com_id=com_id)
 	com_publish = get_object_or_404(models.com_publish_info, com_id=com_info)
-	file_name = com_publish.com_attachment
 	# 返回下载
 	filename = str(com_publish.com_attachment)
 	file_path = settings.MEDIA_ROOT + filename
+
+	print(file_path)
+
 	ext = os.path.basename(file_path).split('.')[-1].lower()
 	if ext not in ['py', 'db', 'sqlite3']:
 		response = FileResponse(open(file_path, 'rb'))

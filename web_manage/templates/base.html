@@ -21,8 +21,8 @@
     </style>
 </head>
 
-<body>
-<nav class="navbar navbar-inverse ">
+<body style=" padding-top: 40px; ">
+<nav class="navbar navbar-default navbar-fixed-top">
     <div class="container-fluid">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
@@ -127,43 +127,10 @@
                     </li>
                 {% else %}
                     <!-- Button trigger modal -->
-                    <button type="button" class="btn btn-default navbar-btn" data-toggle="modal" data-target="#myModal">
+                    <a href="/login/" class="btn btn-default navbar-btn" role="button">
                         登录
-                    </button>
+                    </a>
                     <!-- Modal -->
-                    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                                            aria-hidden="true">&times;</span></button>
-                                    <h4 class="modal-title" id="myModalLabel" style=>欢迎登录</h4>
-                                </div>
-                                <div class="modal-body">
-                                    <form class='form-login' action="/login/" method="post">
-                                        {% csrf_token %}
-
-                                        <div class="form-group">
-                                            <label for="id_username">账号：</label>
-                                            <input type="text" name='account' class="form-control" id="id_username"
-                                                   placeholder="账号">
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="id_password">密码：</label>
-                                            <input type="text" name='psword' class="form-control" id="id_password"
-                                                   placeholder="密码">
-                                        </div>
-                                        <button type="button" class="btn btn-default float-xs-left"
-                                                data-dismiss="modal">
-                                            忘记密码
-                                        </button>
-                                        <button type="reset" class="btn btn-default">重置</button>
-                                        <button type="submit" class="btn btn-primary pull-right">登录</button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 {% endif %}
             </ul>
         </div>
@@ -188,7 +155,7 @@
 {% block content %}{% endblock %}
 
 
-<footer class="footer navbar navbar-inverse" style="color: white;margin: 0;width: 100%;">
+<footer class="footer navbar navbar-default" style="margin: 0;width: 100%;">
     <div style="width: 80%;margin: 0 auto;text-align: center;">
         地址：广东惠州市演达大道46号 邮编：516007<br>
         总机：0752-2529000 E-mail:webmaster@hzu.edu.cn<br>

@@ -64,3 +64,6 @@ class com_need_info_Admin(admin.ModelAdmin):
 	'com_id', 'stu_num', 'stu_name', 'ID_number', 'sex', 'depart', 'major', 'grade', 'stu_class',
 	'email', 'phone_num', 'com_group', 'group_name', 'product_name','tea_num','bank_number','else_info',)
 
+@admin.register(com_publish_info)
+class com_publish_info_Admin(admin.ModelAdmin):
+	list_display = ('com_id', 'apply_announce','apply_step','com_attachment',)
