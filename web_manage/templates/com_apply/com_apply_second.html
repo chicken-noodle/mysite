@@ -2,7 +2,7 @@
 {% load staticfiles %}
 
 {% block title %}
-	学科竞赛|竞赛报名
+    学科竞赛|竞赛报名
 {% endblock %}
 
 {% block is_activate3 %}
@@ -66,7 +66,8 @@
                             {% for stu in stu_list %}
                                 <tr>
                                     {% if info_list.stu_num %}
-                                        <td>{{ stu.stu_number }}</td>
+                                        <td><input type="text" class="form-control" value="{{ stu.stu_number }}"
+                                                   name="stu_num{{ forloop.counter }}" readonly></td>
                                     {% endif %}
                                     {% if info_list.stu_name %}
                                         <td>{{ stu.stu_name }}</td>
@@ -168,6 +169,6 @@
             <div class="col-md-3">
 
             </div>
-            </div>
         </div>
+    </div>
 {% endblock %}

@@ -30,7 +30,7 @@ def login(request):
 		if t_account == "":
 			context['message'] = "？？？输入账号啊"
 			return render(request, 'login.html', context)
-		if 	t_psword == "":
+		if t_psword == "":
 			context['message'] = "？？？倒是输密码啊"
 			return render(request, 'login.html', context)
 		if t_account and t_psword:
@@ -55,10 +55,11 @@ def login(request):
 						return redirect('/alter_info_teach')
 					return redirect('/home')
 				else:
-					message = "密码不正确！"
+					context['message'] = "???连密码都输不对吗？？？"
+					return render(request, 'login.html', context)
 			except:
-				message = "账号不存在！"
-		context['message'] = message
+				context['message'] = "账号不存在！"
+				return render(request, 'login.html', context)
 		return render(request, 'home.html', context)
 	return render(request, 'login.html', context)
 
@@ -514,8 +515,6 @@ def com_apply_first(request):
 			else_info = request.POST.get("else_info")
 			context['else_info'] = else_info
 
-		# 使用session存储报名学生
-		request.session['stu_list'] = stu_list
 		# 跳转确认页面
 		context['stu_list'] = stu_info_list
 		context['info_list'] = info_list
@@ -542,7 +541,12 @@ def com_apply_second(request):
 		flag_else = info_list.else_info
 		flag_groupname = info_list.group_name
 
-		stu_list = request.session['stu_list']
+		# 优化
+		stu_list = []
+		for i in range(1, num + 1):
+			stu_number = request.POST.get('stu_num' + str(i))
+			if stu_number != None and stu_number != "":
+				stu_list.append(stu_number)
 		len_stu = len(stu_list)
 		stu_info_list = []
 		for stu in stu_list:
@@ -602,8 +606,8 @@ def com_apply_second(request):
 				teach.group_id = get_object_or_404(models.com_group_basic_info, group_id=group_id)
 				teach.teach_id = i
 				teach.save()
-
-	return render(request, 'com_apply/com_apply_complete.html', context)
+		return redirect('/personal_center_stu/?tag=2')
+	return redirect('/personal_center_stu/?tag=2')
 
 
 # 学生个人中心
@@ -679,6 +683,218 @@ def apply_detail(request):
 	return render(request, "personal_center_stu/apply_detail.html", context)
 
 
+# 学生个人中心-修改报名信息
+def stu_apply_edit(request):
+	context = {}
+	com_id = request.GET.get('p1')
+	group_id = request.GET.get('p2')
+
+	com_info = get_object_or_404(models.com_basic_info, com_id=com_id)
+	group_info = get_object_or_404(models.com_group_basic_info, group_id=group_id)
+	depart_list = models.depart_info.objects.all()
+
+	info_list = get_object_or_404(models.com_need_info, com_id=com_id)
+	stu_list = models.com_stu_info.objects.filter(group_id=group_info)
+	teach_list = models.com_teach_info.objects.filter(group_id=group_info)
+	sort_list = models.com_sort_info.objects.filter(com_id=com_info)
+
+	context['info_list'] = info_list
+	context['stu_list'] = stu_list
+	context['teach_list'] = teach_list
+	context['sort_list'] = sort_list
+	context['group_info'] = group_info
+	context['depart_list'] = depart_list
+
+	if request.method == 'POST':
+		num = com_info.num_stu
+		flag_full = com_info.need_full
+		flag_same = com_info.same_stu
+		flag_proname = info_list.product_name
+		flag_teanum = com_info.num_teach
+		flag_group = info_list.com_group
+		flag_else = info_list.else_info
+		flag_groupname = info_list.group_name
+
+		stu_list = []
+		for i in range(1, num + 1):
+			name = str("stu_num" + str(i))
+			temp = request.POST.get(name)
+			temp = temp.strip()
+			if temp:
+				stu_list.append(temp)
+
+		stu_info_list = []
+		for stu in stu_list:
+			try:
+				name = models.stu_basic_info.objects.get(stu_number=stu)
+			except ObjectDoesNotExist:
+				context['message'] = '无法搜索到学号对应学生信息，请确认学号无误'
+				return render(request, 'personal_center_stu/stu_apply_edit.html', context)
+			else:
+				stu_info_list.append(name)
+
+		# 判断是够重复报名
+		flag = 1
+		if flag_same == 0:
+			for stu in stu_info_list:
+				com_list = models.com_stu_info.objects.filter(stu_id=stu)
+				for com in com_list:
+					if com.com_id == com_info and com.group_id != group_info:
+						flag = 0
+						break
+		elif flag_same == 1:
+			num = 1
+			for stu in stu_info_list:
+				com_list = models.com_stu_info.objects.filter(stu_id=stu)
+				if num == 1:
+					for com in com_list:
+						if com.com_id == com_info and com.group_id != group_info:
+							flag = 0
+							break
+				else:
+					for com in com_list:
+						if com.com_id == com_info and com.is_leader == 1 and com.group_id != group_info:
+							flag = 0
+							break
+				num = num + 1
+		if flag == 0:
+			# 回到first页面
+			context['message'] = '参赛成员不符合规定哦 :('
+			return render(request, 'personal_center_stu/stu_apply_edit.html', context)
+		# 判断满员
+		student_num = com_info.num_stu
+		len_stu = len(stu_info_list)
+		if flag_full == 1:
+			if len_stu != student_num:
+				context['message'] = "人数不符合规定"
+				return render(request, 'personal_center_stu/stu_apply_edit.html', context)
+		# 判断学号重复
+		list1 = stu_info_list
+		list2 = list(set(list1))
+		if len(list1) != len(list2):
+			# 回到first页面
+			context['message'] = '有重复人员的哦 :('
+			return render(request, 'personal_center_stu/stu_apply_edit.html', context)
+		# 判断作品名称是否为空
+		if flag_proname == 1:
+			prodect_name = request.POST.get('product_name')
+			prodect_name = prodect_name.strip()
+			if prodect_name == "":
+				context['message'] = "作品名称没有填哦 X D "
+				return render(request, 'personal_center_stu/stu_apply_edit.html', context)
+		# 判断小组名称是否为空
+		if flag_groupname == 1:
+			group_name = request.POST.get('group_name')
+			group_name = group_name.strip()
+			if not group_name:
+				context['message'] = "小组名称没有填哦 X D "
+				return render(request, 'personal_center_stu/stu_apply_edit.html', context)
+		# 获取教师信息
+		teach_list = []
+		if flag_teanum:
+			for i in range(1, flag_teanum + 1):
+				teach = request.POST.get(str('tea_name' + str(i))).strip()
+				depart = request.POST.get(str('depart' + str(i)))
+				teacher = models.teach_basic_info.objects.filter(tea_name=teach,department=depart)
+				if not teacher:
+					context['message'] = "指导教师信息不正确哦 X D "
+					return render(request, 'personal_center_stu/stu_apply_edit.html', context)
+				else:
+					for info in teacher:
+						teach_list.append(info)
+		# 对组别信息进行判断
+		if flag_group == 1:
+			sort = request.POST.get("sort")
+		# 备注信息
+		if flag_else == 1:
+			else_info = request.POST.get("else_info")
+		if flag_proname == 1:
+			product_name = request.POST.get('product_name').strip()
+
+		#报名中 - 直接修改
+		if com_info.com_status == 0:
+			pre_stu_list = models.com_stu_info.objects.filter(group_id=group_info)
+			for pre_stu in pre_stu_list:
+				pre_stu.delete()
+			pre_teach_list = models.com_teach_info.objects.filter(group_id=group_info)
+			for pre_teach in pre_teach_list:
+				pre_teach.delete()
+			pre_group_info = models.com_group_basic_info.objects.get(group_id=group_info.group_id)
+			pre_group_info.delete()
+			com_group = models.com_group_basic_info()
+			com_group.com_id = com_info
+			if flag_groupname == 1:
+				com_group.group_name = group_name
+			com_group.group_num = len_stu
+			if flag_group == 1:
+				sort_list = models.com_sort_info.objects.filter(com_id=com_info, sort_name=sort)
+				com_group.com_group = sort_list[0]
+				# 作品名字
+			if flag_proname == 1:
+				com_group.product_name = product_name
+			# 备注
+			if flag_else == 1:
+				com_group.else_info = else_info
+			com_group.save()
+			now_group_id = com_group.group_id
+			number = 1
+			for i in stu_info_list:
+				stu = models.com_stu_info()
+				stu.com_id = com_info
+				stu.group_id = get_object_or_404(models.com_group_basic_info, group_id=now_group_id)
+				stu.stu_id = i
+				if number == 1:
+					stu.is_leader = 1
+				number += 1
+				stu.save()
+			for i in teach_list:
+				teach = models.com_teach_info()
+				teach.com_id = com_info
+				teach.group_id = get_object_or_404(models.com_group_basic_info, group_id=now_group_id)
+				teach.teach_id = i
+				teach.save()
+			return redirect('/personal_center_stu/?tag=2')
+		#其他状态 - 提交申请
+		else:
+			temp_group = models.temp_com_group_basic_info()
+			temp_group.temp_type = "报名信息"
+			temp_group.group_id = group_info
+			temp_group.com_id = com_info
+			if flag_groupname == 1:
+				temp_group.group_name = group_name
+				temp_group.group_num = len_stu
+			if flag_group == 1:
+				sort_list = models.com_sort_info.objects.filter(com_id=com_info, sort_name=sort)
+				temp_group.com_group = sort_list[0]
+				# 作品名字
+			if flag_proname == 1:
+				temp_group.product_name = product_name
+			# 备注
+			if flag_else == 1:
+				temp_group.else_info = else_info
+			temp_group.save()
+
+			temp_id = temp_group.temp_id
+
+			number = 1
+			for i in stu_info_list:
+				stu = models.temp_com_stu_info()
+				stu.temp_id = get_object_or_404(models.temp_com_group_basic_info, temp_id=temp_id)
+				stu.stu_id = i
+				if number == 1:
+					stu.is_leader = 1
+				number += 1
+				stu.save()
+
+			for i in teach_list:
+				teach = models.temp_com_teach_info()
+				teach.temp_id = get_object_or_404(models.temp_com_group_basic_info, temp_id=temp_id)
+				teach.teach_id = i
+				teach.save()
+		return redirect('/personal_center_stu?tag=2')
+	return render(request, 'personal_center_stu/stu_apply_edit.html', context)
+
+
 # 学生个人中心-撤销报名
 def delete_apply(request):
 	context = {}
@@ -702,7 +918,7 @@ def delete_apply(request):
 	com_group = models.com_group_basic_info.objects.filter(group_id=int(group_id), com_id=com_info)
 	com_group.delete()
 
-	return redirect('/personal_center_stu/')
+	return redirect('/personal_center_stu/?tag=2')
 
 
 # 教师个人中心
@@ -975,18 +1191,20 @@ def com_edit(request):
 		# 还差公告
 		com_publish = get_object_or_404(models.com_publish_info, com_id=com_info)
 		if com_attach != None:
-			#取出格式名
+			# 取出格式名
 			f_name = com_attach.name
 			f_name = f_name.split('.')[-1].lower()
-			#重命名文件
-			com_publish.com_attachment = "com_attach\\" + str(com_info.com_id) + "\\" + str(com_info.com_id) + "." + f_name
+			# 重命名文件
+			com_publish.com_attachment = "com_attach\\" + str(com_info.com_id) + "\\" + str(
+				com_info.com_id) + "." + f_name
 			print(com_publish.com_attachment)
 			url = settings.MEDIA_ROOT + 'com_attach\\' + str(com_info.com_id)
 			# 判断路径是否存在
 			isExists = os.path.exists(url)
 			if not isExists:
 				os.makedirs(url)
-			file_url = open(settings.MEDIA_ROOT + "com_attach\\" + str(com_info.com_id) + "\\" + str(com_info.com_id) + "." + f_name,
+			file_url = open(settings.MEDIA_ROOT + "com_attach\\" + str(com_info.com_id) + "\\" + str(
+				com_info.com_id) + "." + f_name,
 			                'wb')
 			for chunk in com_attach.chunks():
 				file_url.write(chunk)
@@ -996,9 +1214,6 @@ def com_edit(request):
 		com_publish.save()
 
 		return redirect('/com_manage/')
-
-
-
 
 
 # 学科委员—增加比赛
@@ -1214,18 +1429,20 @@ def add_com_complete(request):
 		com_publish = models.com_publish_info()
 		com_publish.com_id = com_info
 		if com_attach != None:
-			#取出格式名
+			# 取出格式名
 			f_name = com_attach.name
 			f_name = f_name.split('.')[-1].lower()
-			#重命名文件
-			com_publish.com_attachment = "com_attach\\" + str(com_info.com_id) + "\\" + str(com_info.com_id) + "." + f_name
+			# 重命名文件
+			com_publish.com_attachment = "com_attach\\" + str(com_info.com_id) + "\\" + str(
+				com_info.com_id) + "." + f_name
 			print(com_publish.com_attachment)
 			url = settings.MEDIA_ROOT + 'com_attach\\' + str(com_info.com_id)
 			# 判断路径是否存在
 			isExists = os.path.exists(url)
 			if not isExists:
 				os.makedirs(url)
-			file_url = open(settings.MEDIA_ROOT + "com_attach\\" + str(com_info.com_id) + "\\" + str(com_info.com_id) + "." + f_name,
+			file_url = open(settings.MEDIA_ROOT + "com_attach\\" + str(com_info.com_id) + "\\" + str(
+				com_info.com_id) + "." + f_name,
 			                'wb')
 			for chunk in com_attach.chunks():
 				file_url.write(chunk)

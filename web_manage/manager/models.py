@@ -31,7 +31,7 @@ class stu_basic_info(models.Model):
 	major = models.ForeignKey('major_info', to_field='major_name', on_delete=models.DO_NOTHING)
 	grade = models.ForeignKey('grade_info', to_field='grade_name', on_delete=models.DO_NOTHING)
 	stu_class = models.ForeignKey('class_info', to_field='class_name', on_delete=models.DO_NOTHING)
-	sex = models.CharField(max_length=5, choices=(("male", "男"), ("female", "女")))
+	sex = models.CharField(max_length=10, choices=(("男", "男"), ("女", "女")))
 	ID_number = models.CharField(max_length=25)
 	bank_number = models.CharField(max_length=25, null=True, blank=True)
 	phone_number = models.CharField(max_length=25, null=True, blank=True)
@@ -119,23 +119,30 @@ class com_teach_info(models.Model):
 	group_id = models.ForeignKey('com_group_basic_info', to_field='group_id', on_delete=models.DO_NOTHING)
 	teach_id = models.ForeignKey('teach_basic_info', to_field='tea_number', on_delete=models.DO_NOTHING)
 
-"""
+
 # 学生申请修改报名信息
 class temp_com_group_basic_info(models.Model):
-	group_id = models.ForeignKey('com_group_basic_info',to_field='group_id', on_delete=models.CASCADE)
+	temp_id = models.AutoField(primary_key=True)
+	temp_type = models.CharField(max_length=50, choices=(("报名信息", "报名信息"), ("个人信息", "个人信息")))
+	group_id = models.ForeignKey('com_group_basic_info', to_field='group_id', on_delete=models.CASCADE, default='')
+	com_id = models.ForeignKey('com_basic_info', to_field='com_id', on_delete=models.CASCADE, default='')
 	group_name = models.CharField(max_length=25, null=True, blank=True)
 	group_num = models.IntegerField(default=1)
 	com_group = models.ForeignKey('com_sort_info', to_field='id', on_delete=models.SET_NULL, null=True, blank=True)
 	product_name = models.CharField(max_length=50, null=True, blank=True)
 	else_info = models.TextField(default='', null=True, blank=True)
 
+
 class temp_com_stu_info(models.Model):
-	group_id = models.ForeignKey('com_group_basic_info', to_field='group_id', on_delete=models.CASCADE)
+	temp_id = models.ForeignKey('temp_com_group_basic_info', to_field='temp_id', on_delete=models.CASCADE)
 	stu_id = models.ForeignKey('stu_basic_info', to_field='stu_number', on_delete=models.DO_NOTHING)
 	is_leader = models.BooleanField(default=0)
 
+
 class temp_com_teach_info(models.Model):
-"""
+	temp_id = models.ForeignKey('temp_com_group_basic_info', to_field='temp_id', on_delete=models.CASCADE)
+	teach_id = models.ForeignKey('teach_basic_info', to_field='tea_number', on_delete=models.DO_NOTHING)
+
 
 # 竞赛组别信息
 class com_sort_info(models.Model):
@@ -170,5 +177,3 @@ class stu_fllow_com_info(models.Model):
 	stu_id = models.ForeignKey('stu_basic_info', to_field='stu_number', on_delete=models.DO_NOTHING)
 	com_id = models.ForeignKey('com_basic_info', to_field='com_id', on_delete=models.DO_NOTHING)
 	status = models.BooleanField(default=0)
-
-

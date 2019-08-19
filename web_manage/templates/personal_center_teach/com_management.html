@@ -44,65 +44,62 @@
                         <td>已结束</td>
                     {% endif %}
                     <td>
-                        <a href="/com_detail_manage?p={{ com.com_id }}" class="btn btn-default" role="button">详情</a>
-                        <!-- Small modal -->
-                        <button type="button" class="btn btn-primary" data-toggle="modal"
-                                data-target="#delete{{ forloop.counter }}">设置状态
-                        </button>
+                        <a href="/com_detail_manage?p={{ com.com_id }}" class="btn btn-default" role="button" >详情</a>
 
-                        <div class="modal fade bs-example-modal-sm" id="delete{{ forloop.counter }}" tabindex="-1"
-                             role="dialog"
-                             aria-labelledby="mySmallModalLabel">
-                            <div class="modal-dialog modal-sm" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-body">
+                        <a class="btn btn-primary" role="button" data-toggle="collapse" data-parent="#accordion"
+                           href="#collapse{{ forloop.counter }}" aria-expanded="false"
+                           aria-controls="collapse{{ forloop.counter }}">
+                            设定状态
+                        </a>
 
-                                        <form class="form-horizontal" action="/set_com_status/?p={{ com.com_id }}"
-                                              method="POST">
-                                            {% csrf_token %}
-                                            <div class="form-group">
-                                                <div class="checkbox">
-                                                    <label>
-                                                        <input name="status" type="checkbox" value="0">
-                                                        报名中
-                                                    </label>
-                                                </div>
-                                            </div>
+                        <div id="collapse{{ forloop.counter }}" class="panel-collapse collapse" role="tabpanel"
+                             aria-labelledby="heading{{ forloop.counter }}">
+                            <div class="panel-body">
+                                <form class="form-horizontal" action="/set_com_status/?p={{ com.com_id }}"
+                                      method="POST">
+                                    {% csrf_token %}
 
-                                            <div class="form-group">
-                                                <div class="checkbox">
-                                                    <label>
-                                                        <input name="status" type="checkbox" value="1">
-                                                        报名结束
-                                                    </label>
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <div class="checkbox">
-                                                    <label>
-                                                        <input name="status" type="checkbox" value="2">
-                                                        比赛中
-                                                    </label>
-                                                </div>
-                                            </div>
-
-                                            <div class="form-group">
-                                                <div class="checkbox">
-                                                    <label>
-                                                        <input name="status" type="checkbox" value="3">
-                                                        已结束
-                                                    </label>
-                                                </div>
-                                            </div>
-
-                                            <div class="modal-footer">
-                                                <button type="submit" class="btn btn-primary pull-right">设定好了</button>
-                                            </div>
-                                        </form>
-
+                                    <div class="form-group">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input name="status" type="checkbox" value="0">
+                                                报名中
+                                            </label>
+                                        </div>
                                     </div>
-                                </div>
+
+                                    <div class="form-group">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input name="status" type="checkbox" value="1">
+                                                报名结束
+                                            </label>
+                                        </div>
+                                    </div>
+
+
+                                    <div class="form-group">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input name="status" type="checkbox" value="2">
+                                                比赛中
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input name="status" type="checkbox" value="3">
+                                                已结束
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <button type="submit" class="btn btn-primary">确定</button>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </td>

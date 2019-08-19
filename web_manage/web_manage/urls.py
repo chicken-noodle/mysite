@@ -38,6 +38,7 @@ urlpatterns = [
     path('personal_center_stu/',views.personal_center_stu),
     path('apply_detail/',views.apply_detail),
     path('delete_apply/',views.delete_apply),
+    path('stu_apply_edit/', views.stu_apply_edit),
     #知道教师个人中心
     path('personal_cnter_teach/',views.personal_center_teach),
     path('reject_apply/',views.reject_apply),

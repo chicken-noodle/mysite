@@ -57,37 +57,81 @@
                 {% endif %}
                 <td>
                     <a href="/apply_detail?p1={{ com.com_id }}&p2={{ group.group_id }}" class="btn btn-default"
-                       role="button">详情</a>
+                       role="button" style="display:inline-block;">详情</a>
 
                     {% if com.com_status == 0 %}
-                        <!-- Small modal -->
-                        <button type="button" class="btn btn-danger" data-toggle="modal"
-                                data-target="#delete{{ forloop.counter }}">撤销
-                        </button>
+                        <div class="dropdown" style="display:inline-block;">
+                            <button class="btn btn-primary" id="dLabel{{ forloop.counter }}" type="button"
+                                    data-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false">
+                                修改
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dLabel{{ forloop.counter }}"
+                                style="text-align: center;">
+                                <li>
+                                    <a href="/stu_apply_edit/?p1={{ com.com_id }}&p2={{ group.group_id }}">修改</a>
+                                </li>
+                                <li role="separator" class="divider"></li>
+                                <li>
+                                    <a data-toggle="modal" data-target="#delete1{{ forloop.counter }}">撤销</a>
+                                </li>
+                            </ul>
+                        </div>
+                    {% else %}
+                        <div class="dropdown" style="display:inline-block;">
+                            <button class="btn btn-primary" id="dLabel{{ forloop.counter }}" type="button"
+                                    data-toggle="dropdown" aria-haspopup="true"
+                                    aria-expanded="false">
+                                申请
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dLabel{{ forloop.counter }}"
+                                style="text-align: center;">
+                                <li>
+                                    <a href="/stu_apply_edit/?p1={{ com.com_id }}&p2={{ group.group_id }}">修改</a>
+                                </li>
+                                <li role="separator" class="divider"></li>
+                                <li>
+                                    <a data-toggle="modal" data-target="#delete2{{ forloop.counter }}">撤销</a>
+                                </li>
+                            </ul>
+                        </div>
+                    {% endif %}
 
-                        <div class="modal fade bs-example-modal-sm" id="delete{{ forloop.counter }}" tabindex="-1"
-                             role="dialog"
-                             aria-labelledby="mySmallModalLabel">
-                            <div class="modal-dialog modal-sm" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-body">
-                                        <h4>确定要撤销该报名信息吗？</h4>
-                                        <h4>删除后报名将取消</h4>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-default" data-dismiss="modal">还是算了</button>
-                                        <a href="/delete_apply?p1={{ com.com_id }}&p2={{ group.group_id }}"
-                                           class="btn btn-primary" role="button">我意已决</a>
-                                    </div>
+                    <!-- 修改 撤销弹出模态框 -->
+                    <div class="modal fade bs-example-modal-sm" id="delete1{{ forloop.counter }}" tabindex="-1"
+                         role="dialog"
+                         aria-labelledby="mySmallModalLabel">
+                        <div class="modal-dialog modal-sm" role="document">
+                            <div class="modal-content">
+                                <div class="modal-body">
+                                    <h4>确定要撤销该报名信息吗？</h4>
+                                    <h4>删除后报名将取消</h4>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">还是算了</button>
+                                    <a href="/delete_apply?p1={{ com.com_id }}&p2={{ group.group_id }}"
+                                       class="btn btn-primary" role="button">我意已决</a>
                                 </div>
                             </div>
                         </div>
-                    {% else %}
-                        <button type="button" class="btn btn-primary" data-toggle="modal"
-                                data-target="#delete{{ forloop.counter }}" disabled="disabled">撤销
-                        </button>
-                    {% endif %}
-
+                    </div>
+                    <!-- 申请 撤销弹出模态框 -->
+                    <div class="modal fade bs-example-modal-sm" id="delete2{{ forloop.counter }}" tabindex="-1"
+                         role="dialog"
+                         aria-labelledby="mySmallModalLabel">
+                        <div class="modal-dialog modal-sm" role="document">
+                            <div class="modal-content">
+                                <div class="modal-body">
+                                    <h4>确定要撤销该报名信息吗？</h4>
+                                    <h4>待学科委员确认后才会撤销</h4>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">还是算了</button>
+                                    <a href="#" class="btn btn-primary" role="button">我意已决</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </td>
             </tr>
             {% empty %}
