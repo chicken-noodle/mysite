@@ -10,7 +10,7 @@
         <div class="row">
             <div class="col-md-2">
                 <div class="panel panel-default">
-                    <div class="page-header">
+                    <div class="panel-heading">
                         <h4>指导教师</h4>
                     </div>
                     <div class="list-group">
@@ -31,7 +31,7 @@
                         </a>
                     </div>
                     {% if request.session.user_power == '3' %}
-                        <div class="page-header">
+                        <div class="panel-heading">
                             <h4>学科竞赛委员</h4>
                         </div>
                         <div class="list-group">
@@ -44,35 +44,23 @@
                             <a href="#" class="list-group-item {% block active8 %}{% endblock %}">
                                 奖项
                             </a>
-                        </div>
-                        <div class="panel panel-default">
-                            <div class="panel-heading" role="tab" id="headingOne">
-                                <h4 class="panel-title">
-                                    <a role="button" data-toggle="collapse" data-parent="#accordion"
-                                       href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                        申请<span class="caret"></span>
+                            <a class="list-group-item" data-toggle="collapse" href="#collapseExample"
+                               aria-expanded="false" aria-controls="collapseExample">
+                                申请<span class="caret"></span>
+                            </a>
+
+                            <div class="collapse" id="collapseExample">
+                                <div class="list-group">
+                                    <a href="/apply_application/"
+                                       class="list-group-item {% block active9 %}{% endblock %}">
+                                        报名信息申请
                                     </a>
-                                </h4>
-                            </div>
-                            <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel"
-                                 aria-labelledby="headingOne">
-                                <div class="panel-body">
-                                    <li>
-                                        <a href="/com_manage/"
-                                           class="list-group-item {% block active9 %}{% endblock %}">
-                                            报名信息申请
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" class="list-group-item {% block active10 %}{% endblock %}">
-                                            XX信息申请
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="#" class="list-group-item {% block activ11 %}{% endblock %}">
-                                            XX信息申请
-                                        </a>
-                                    </li>
+                                    <a href="#" class="list-group-item {% block active10 %}{% endblock %}">
+                                        XX信息申请
+                                    </a>
+                                    <a href="#" class="list-group-item {% block activ11 %}{% endblock %}">
+                                        XX信息申请
+                                    </a>
                                 </div>
                             </div>
                         </div>

@@ -457,7 +457,6 @@ def com_apply_first(request):
 		# 判断作品名称是否为空
 		if flag_proname == 1:
 			prodect_name = request.POST.get('product_name')
-			prodect_name = prodect_name.strip()
 			if prodect_name == "":
 				context['message'] = "作品名称没有填哦 X D "
 				context['com_info'] = com_info
@@ -467,11 +466,11 @@ def com_apply_first(request):
 				num = com_info.num_stu
 				context['stu_num'] = range(1, num + 1)
 				return render(request, 'com_apply/com_apply_first.html', context)
+			prodect_name = prodect_name.strip()
 			context['product_name'] = prodect_name
 		# 判断小组名称是否为空
 		if flag_groupname == 1:
 			group_name = request.POST.get('group_name')
-			group_name = group_name.strip()
 			if group_name == "":
 				context['message'] = "小组名称没有填哦 X D "
 				context['com_info'] = com_info
@@ -481,6 +480,7 @@ def com_apply_first(request):
 				num = com_info.num_stu
 				context['stu_num'] = range(1, num + 1)
 				return render(request, 'com_apply/com_apply_first.html', context)
+			group_name = group_name.strip()
 			context['group_name'] = group_name
 		# 对指导教师进行判断
 		teach_list = []
@@ -513,6 +513,7 @@ def com_apply_first(request):
 		# 备注信息
 		if flag_else == 1:
 			else_info = request.POST.get("else_info")
+			else_info = else_info.strip()
 			context['else_info'] = else_info
 
 		# 跳转确认页面
@@ -795,7 +796,7 @@ def stu_apply_edit(request):
 			for i in range(1, flag_teanum + 1):
 				teach = request.POST.get(str('tea_name' + str(i))).strip()
 				depart = request.POST.get(str('depart' + str(i)))
-				teacher = models.teach_basic_info.objects.filter(tea_name=teach,department=depart)
+				teacher = models.teach_basic_info.objects.filter(tea_name=teach, department=depart)
 				if not teacher:
 					context['message'] = "指导教师信息不正确哦 X D "
 					return render(request, 'personal_center_stu/stu_apply_edit.html', context)
@@ -811,7 +812,7 @@ def stu_apply_edit(request):
 		if flag_proname == 1:
 			product_name = request.POST.get('product_name').strip()
 
-		#报名中 - 直接修改
+		# 报名中 - 直接修改
 		if com_info.com_status == 0:
 			pre_stu_list = models.com_stu_info.objects.filter(group_id=group_info)
 			for pre_stu in pre_stu_list:
@@ -829,7 +830,7 @@ def stu_apply_edit(request):
 			if flag_group == 1:
 				sort_list = models.com_sort_info.objects.filter(com_id=com_info, sort_name=sort)
 				com_group.com_group = sort_list[0]
-				# 作品名字
+			# 作品名字
 			if flag_proname == 1:
 				com_group.product_name = product_name
 			# 备注
@@ -854,7 +855,7 @@ def stu_apply_edit(request):
 				teach.teach_id = i
 				teach.save()
 			return redirect('/personal_center_stu/?tag=2')
-		#其他状态 - 提交申请
+		# 其他状态 - 提交申请
 		else:
 			temp_group = models.temp_com_group_basic_info()
 			temp_group.temp_type = "报名信息"
@@ -866,7 +867,7 @@ def stu_apply_edit(request):
 			if flag_group == 1:
 				sort_list = models.com_sort_info.objects.filter(com_id=com_info, sort_name=sort)
 				temp_group.com_group = sort_list[0]
-				# 作品名字
+			# 作品名字
 			if flag_proname == 1:
 				temp_group.product_name = product_name
 			# 备注
@@ -1453,3 +1454,100 @@ def add_com_complete(request):
 
 		return redirect('/com_manage/')
 	return render(request, 'personal_center_teach/add_com/second.html', context)
+
+
+def apply_application(request):
+	context = {}
+	apply_application_list = models.temp_com_group_basic_info.objects.all()
+	pre_group_list = []
+	com_need_list = []
+	stu_pre_list = []
+	stu_apply_list = []
+	teach_pre_list = []
+	teach_apply_list = []
+
+	apply_info_list = []
+	for apply_application in apply_application_list:
+		pre_group_info = apply_application.group_id
+		com_need_info = get_object_or_404(models.com_need_info, com_id=apply_application.com_id.com_id)
+
+		temp_stu_list = ''
+		temp_student_list = models.temp_com_stu_info.objects.filter(temp_id=apply_application)
+		for temp_student in temp_student_list:
+			temp_stu_list += str(temp_student.stu_id.stu_name) + ' '
+
+		pre_stu_list = ''
+		pre_student_list = models.com_stu_info.objects.filter(group_id=apply_application.group_id)
+		for pre_student in pre_student_list:
+			pre_stu_list += str(pre_student.stu_id.stu_name) + ' '
+
+		temp_teach_list = ''
+		temp_teacher_list = models.temp_com_teach_info.objects.filter(temp_id=apply_application)
+		for temp_teacher in temp_teacher_list:
+			temp_teach_list += str(temp_teacher.teach_id.tea_name) + ' '
+
+		pre_teach_list = ''
+		pre_teacher_list = models.com_teach_info.objects.filter(group_id=apply_application.group_id)
+		for pre_teacher in pre_teacher_list:
+			pre_teach_list += str(pre_teacher.teach_id.tea_name) + ' '
+
+		pre_group_list.append(pre_group_info)
+		com_need_list.append(com_need_info)
+		stu_pre_list.append(pre_stu_list)
+		stu_apply_list.append(temp_stu_list)
+		teach_pre_list.append(pre_teach_list)
+		teach_apply_list.append(temp_teach_list)
+
+	apply_info_list = zip(com_need_list, apply_application_list, pre_group_list, stu_pre_list, stu_apply_list,
+	                      teach_pre_list, teach_apply_list)
+	context['apply_info_list'] = apply_info_list
+	return render(request, 'personal_center_teach/apply_application.html', context)
+
+
+def apply_application_agree(request):
+	temp_id = request.GET.get('id')
+	temp_info = get_object_or_404(models.temp_com_group_basic_info, temp_id=temp_id)
+	group_info = temp_info.group_id
+
+	# 修改小组信息
+	group_info.group_name = temp_info.group_name
+	group_info.group_num = temp_info.group_num
+	group_info.com_group = temp_info.com_group
+	group_info.product_name = temp_info.product_name
+	group_info.else_info = temp_info.else_info
+	group_info.save()
+
+	# 修改小组学生信息
+	temp_stu_list = models.temp_com_stu_info.objects.filter(temp_id=temp_info)
+	pre_stu_list = models.com_stu_info.objects.filter(group_id=group_info)
+	for pre_stu in pre_stu_list:
+		pre_stu.delete()
+	for temp_stu in temp_stu_list:
+		new_stu = models.com_stu_info()
+		new_stu.com_id = group_info.com_id
+		new_stu.group_id = group_info
+		new_stu.stu_id = temp_stu.stu_id
+		new_stu.is_leader = temp_stu.is_leader
+		new_stu.save()
+		temp_stu.delete()
+
+	# 修改指导教师信息
+	temp_teach_list = models.temp_com_teach_info.objects.filter(temp_id=temp_info)
+	pre_teach_list = models.com_teach_info.objects.filter(group_id=group_info)
+	for pre_teach in pre_teach_list:
+		pre_teach.delete()
+	for temp_teach in temp_teach_list:
+		new_teach = models.com_teach_info()
+		new_teach.com_id = group_info.com_id
+		new_teach.group_id = group_info
+		new_teach.teach_id = temp_teach.teach_id
+		new_teach.save()
+		temp_teach.delete()
+
+	temp_info.delete()
+
+	return redirect('/apply_application/')
+
+
+def apply_application_disagree(request):
+	return

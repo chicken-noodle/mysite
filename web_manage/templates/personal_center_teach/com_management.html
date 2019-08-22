@@ -44,7 +44,7 @@
                         <td>已结束</td>
                     {% endif %}
                     <td>
-                        <a href="/com_detail_manage?p={{ com.com_id }}" class="btn btn-default" role="button" >详情</a>
+                        <a href="/com_detail_manage?p={{ com.com_id }}" class="btn btn-default" role="button">详情</a>
 
                         <a class="btn btn-primary" role="button" data-toggle="collapse" data-parent="#accordion"
                            href="#collapse{{ forloop.counter }}" aria-expanded="false"
@@ -58,7 +58,6 @@
                                 <form class="form-horizontal" action="/set_com_status/?p={{ com.com_id }}"
                                       method="POST">
                                     {% csrf_token %}
-
                                     <div class="form-group">
                                         <div class="checkbox">
                                             <label>
@@ -76,8 +75,6 @@
                                             </label>
                                         </div>
                                     </div>
-
-
                                     <div class="form-group">
                                         <div class="checkbox">
                                             <label>
@@ -86,7 +83,6 @@
                                             </label>
                                         </div>
                                     </div>
-
                                     <div class="form-group">
                                         <div class="checkbox">
                                             <label>
@@ -95,7 +91,6 @@
                                             </label>
                                         </div>
                                     </div>
-
                                     <div class="row">
                                         <button type="submit" class="btn btn-primary">确定</button>
                                     </div>

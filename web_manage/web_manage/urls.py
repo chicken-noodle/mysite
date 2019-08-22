@@ -50,6 +50,9 @@ urlpatterns = [
     path('com_edit/',views.com_edit),
     path('add_com/',views.add_com),
     path('add_com_complete/',views.add_com_complete),
+    path('apply_application/',views.apply_application),
+    path('apply_application_agree/',views.apply_application_agree),
+    path('apply_application_disagree/',views.apply_application_disagree),
     #静态资源
     re_path(r'^media/(?P<path>.*)$', serve, {"document_root": settings.MEDIA_ROOT}),
 ]
