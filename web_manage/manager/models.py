@@ -25,7 +25,7 @@ class class_info(models.Model):
 
 # 学生基本信息
 class stu_basic_info(models.Model):
-	stu_number = models.CharField(max_length=25, primary_key=True)
+	stu_number = models.CharField(max_length=25, primary_key=True, default='0')
 	stu_name = models.CharField(max_length=25)
 	department = models.ForeignKey('depart_info', to_field='depart_name', on_delete=models.DO_NOTHING)
 	major = models.ForeignKey('major_info', to_field='major_name', on_delete=models.DO_NOTHING)
@@ -35,7 +35,7 @@ class stu_basic_info(models.Model):
 	ID_number = models.CharField(max_length=25)
 	bank_number = models.CharField(max_length=25, null=True, blank=True)
 	phone_number = models.CharField(max_length=25, null=True, blank=True)
-	email = models.EmailField(max_length=255, unique=True, null=True, blank=True)
+	email = models.EmailField(max_length=255, null=True, blank=True)
 	photo = models.ImageField(upload_to='photo', null=True, blank=True)
 	stu_card_photo = models.ImageField(upload_to='stu_card_photo', null=True, blank=True)
 
@@ -57,13 +57,13 @@ class profess_info(models.Model):
 
 # 指导教师基本信息
 class teach_basic_info(models.Model):
-	tea_number = models.CharField(max_length=25, primary_key=True)
+	tea_number = models.CharField(max_length=25, primary_key=True, default='0')
 	tea_name = models.CharField(max_length=25)
 	profess = models.ForeignKey('profess_info', to_field='profess_name', on_delete=models.DO_NOTHING)
 	department = models.ForeignKey('depart_info', to_field='depart_name', on_delete=models.DO_NOTHING)
 	major = models.ForeignKey('major_info', to_field='major_name', on_delete=models.DO_NOTHING)
 	ID_number = models.CharField(max_length=25)
-	email = models.EmailField(max_length=255, unique=True, null=True, blank=True)
+	email = models.EmailField(max_length=255, null=True, blank=True)
 	phone_number = models.CharField(max_length=25, null=True, blank=True)
 	photo = models.ImageField(upload_to='photo', null=True, blank=True)
 
