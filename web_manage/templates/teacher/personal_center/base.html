@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block title %}
+    学科竞赛|个人中心
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-2">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4>指导教师</h4>
+                    </div>
+                    <div class="list-group">
+                        <a href="/teacher/personal_center_teach/" class="list-group-item {% block active1 %}{% endblock %}">
+                            参赛小组
+                        </a>
+                        <a href="#" class="list-group-item {% block active2 %}{% endblock %}">
+                            参赛经历
+                        </a>
+                        <a href="#" class="list-group-item {% block active3 %}{% endblock %}">
+                            获奖结果
+                        </a>
+                        <a href="#" class="list-group-item {% block active4 %}{% endblock %}">
+                            指导记录
+                        </a>
+                        <a href="#" class="list-group-item {% block active5 %}{% endblock %}">
+                            个人信息
+                        </a>
+                    </div>
+                    {% if request.session.user_power == '3' %}
+                        <div class="panel-heading">
+                            <h4>学科竞赛委员</h4>
+                        </div>
+                        <div class="list-group">
+                            <a href="/member/com_manage/" class="list-group-item {% block active6 %}{% endblock %}">
+                                比赛
+                            </a>
+                            <a href="#" class="list-group-item {% block active7 %}{% endblock %}">
+                                新闻
+                            </a>
+                            <a href="#" class="list-group-item {% block active8 %}{% endblock %}">
+                                奖项
+                            </a>
+                            <a class="list-group-item" data-toggle="collapse" href="#collapseExample"
+                               aria-expanded="false" aria-controls="collapseExample">
+                                申请<span class="caret"></span>
+                            </a>
+
+                            <div class="collapse" id="collapseExample">
+                                <div class="list-group">
+                                    <a href="/member/apply_application/"
+                                       class="list-group-item {% block active9 %}{% endblock %}">
+                                        报名信息申请
+                                    </a>
+                                    <a href="#" class="list-group-item {% block active10 %}{% endblock %}">
+                                        XX信息申请
+                                    </a>
+                                    <a href="#" class="list-group-item {% block activ11 %}{% endblock %}">
+                                        XX信息申请
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-10">
+                <div class="panel panel-default">
+                    {% block body %}
+
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

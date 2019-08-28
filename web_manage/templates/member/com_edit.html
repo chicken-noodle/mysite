@@ -1,0 +1,366 @@
+{% extends 'teacher/personal_center/base.html' %}
+{% load staticfiles %}
+
+{% block title %}
+    学科竞赛|个人中心
+{% endblock %}
+
+{% block active1 %}
+    active
+{% endblock %}
+
+{% block body %}
+    <div class="panel-heading">
+        <h3>编辑比赛</h3>
+    </div>
+    <div class="panel-body">
+        {% if warn %}
+            <div class="alert alert-warning">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span>
+                </button>
+                {{ warn }}
+            </div>
+        {% endif %}
+        <form class="form-horizontal" action="/member/com_edit/?p={{ com_info.com_id }}" method="POST"
+              enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="row">
+                <h3>竞赛信息</h3>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon2">名称</span>
+                        <input type="text" class="form-control" name="com_name" value="{{ com_info.com_name }}">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon2">报名开始时间</span>
+                        <input type="text" class="form-control" name="begin_regit" value="{{ com_info.begin_regit }}">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon2">报名结束时间</span>
+                        <input type="text" class="form-control" name="end_regit" value="{{ com_info.end_regit }}">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon2">比赛开始时间</span>
+                        <input type="text" class="form-control" name="begin_time" value="{{ com_info.begin_time }}">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon2">比赛结束时间</span>
+                        <input type="text" class="form-control" name="end_time" value="{{ com_info.end_time }}">
+                    </div>
+                </div>
+            </div>
+
+            {% if com_info.com_sort_num != 0 %}
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                            <input type="checkbox" name="if_com_sort" value="1">组别
+                          </span>
+                            <input type="text" class="form-control" name="sort_list" value="{{ sort_list }}">
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if com_info.if_web != 0 %}
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon2">官网</span>
+                            <input type="text" class="form-control" name="com_web" value="{{ com_info.com_web }}">
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon2">指导教师人数</span>
+                        <input type="text" class="form-control" name="num_teach" value="{{ com_info.num_teach }}">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon2">小组人数</span>
+                        <input type="text" class="form-control" name="num_stu" value="{{ com_info.num_stu }}">
+                    </div>
+                </div>
+            </div>
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>满员</th>
+                    <th>重复</th>
+                </tr>
+                </thead>
+                <tbody>
+                <th>
+                    <select class="form-control" name="need_full">
+                        {% if com_info.need_full == 1 %}
+                            <option value="1" selected>True</option>
+                            <option value="0">False</option>
+                        {% else %}
+                            <option value="1">True</option>
+                            <option value="0" selected>False</option>
+                        {% endif %}
+                    </select>
+                </th>
+                <th>
+                    <select class="form-control" name="same_stu">
+                        {% if com_info.same_stu == 1 %}
+                            <option value="1" selected>True</option>
+                            <option value="0">False</option>
+                        {% else %}
+                            <option value="1">True</option>
+                            <option value="0" selected>False</option>
+                        {% endif %}
+                    </select>
+                </th>
+                </tbody>
+            </table>
+
+
+            <div class="row">
+                <h3>学生信息</h3>
+            </div>
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>学号</th>
+                    <th>姓名</th>
+                    <th>身份证号</th>
+                    <th>性别</th>
+                    <th>院系</th>
+                    <th>专业</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>
+                        <select class="form-control" name="stu_num">
+                            {% if com_need.stu_num == 1 %}
+                                <option value="1" selected>True</option>
+                                <option value="0">False</option>
+                            {% else %}
+                                <option value="1">True</option>
+                                <option value="0" selected>False</option>
+                            {% endif %}
+                        </select>
+                    </td>
+                    <td>
+                        <select class="form-control" name="stu_name">
+                            {% if com_need.stu_name == 1 %}
+                                <option value="1" selected>True</option>
+                                <option value="0">False</option>
+                            {% else %}
+                                <option value="1">True</option>
+                                <option value="0" selected>False</option>
+                            {% endif %}
+                        </select>
+                    </td>
+                    <td>
+                        <select class="form-control" name="ID_number">
+                            {% if com_need.ID_number == 1 %}
+                                <option value="1" selected>True</option>
+                                <option value="0">False</option>
+                            {% else %}
+                                <option value="1">True</option>
+                                <option value="0" selected>False</option>
+                            {% endif %}
+                        </select>
+                    </td>
+                    <td>
+                        <select class="form-control" name="sex">
+                            {% if com_need.sex == 1 %}
+                                <option value="1" selected>True</option>
+                                <option value="0">False</option>
+                            {% else %}
+                                <option value="1">True</option>
+                                <option value="0" selected>False</option>
+                            {% endif %}
+                        </select>
+                    </td>
+                    <td>
+                        <select class="form-control" name="depart">
+                            {% if com_need.depart == 1 %}
+                                <option value="1" selected>True</option>
+                                <option value="0">False</option>
+                            {% else %}
+                                <option value="1">True</option>
+                                <option value="0" selected>False</option>
+                            {% endif %}
+                        </select>
+                    </td>
+                    <td>
+                        <select class="form-control" name="major">
+                            {% if com_need.major == 1 %}
+                                <option value="1" selected>True</option>
+                                <option value="0">False</option>
+                            {% else %}
+                                <option value="1">True</option>
+                                <option value="0" selected>False</option>
+                            {% endif %}
+                        </select>
+                    </td>
+                </tr>
+                </tbody>
+                <thead>
+                <th>年级</th>
+                <th>班级</th>
+                <th>邮箱</th>
+                <th>手机号码</th>
+                <th>银行卡号</th>
+                <th>其他</th>
+                </thead>
+                <tbody>
+                <td>
+                    <select class="form-control" name="grade">
+                        {% if com_need.grade == 1 %}
+                            <option value="1" selected>True</option>
+                            <option value="0">False</option>
+                        {% else %}
+                            <option value="1">True</option>
+                            <option value="0" selected>False</option>
+                        {% endif %}
+                    </select>
+                </td>
+                <td>
+                    <select class="form-control" name="stu_class">
+                        {% if com_need.stu_class == 1 %}
+                            <option value="1" selected>True</option>
+                            <option value="0">False</option>
+                        {% else %}
+                            <option value="1">True</option>
+                            <option value="0" selected>False</option>
+                        {% endif %}
+                    </select>
+                </td>
+                <td>
+                    <select class="form-control" name="email">
+                        {% if com_need.email == 1 %}
+                            <option value="1" selected>True</option>
+                            <option value="0">False</option>
+                        {% else %}
+                            <option value="1">True</option>
+                            <option value="0" selected>False</option>
+                        {% endif %}
+                    </select>
+                </td>
+                <td>
+                    <select class="form-control" name="phone_num">
+                        {% if com_need.phone_num == 1 %}
+                            <option value="1" selected>True</option>
+                            <option value="0">False</option>
+                        {% else %}
+                            <option value="1">True</option>
+                            <option value="0" selected>False</option>
+                        {% endif %}
+                    </select>
+                </td>
+                <td>
+                    <select class="form-control" name="bank_number">
+                        {% if com_need.bank_number == 1 %}
+                            <option value="1" selected>True</option>
+                            <option value="0">False</option>
+                        {% else %}
+                            <option value="1">True</option>
+                            <option value="0" selected>False</option>
+                        {% endif %}
+                    </select>
+                </td>
+                <td>
+                    <select class="form-control" name="else_info">
+                        {% if com_need.else_info == 1 %}
+                            <option value="1" selected>True</option>
+                            <option value="0">False</option>
+                        {% else %}
+                            <option value="1">True</option>
+                            <option value="0" selected>False</option>
+                        {% endif %}
+                    </select>
+                </td>
+                </tbody>
+            </table>
+
+
+            <div class="row">
+                <h3>竞赛小组信息</h3>
+            </div>
+            <table class="table table-bordered">
+                <thead>
+                <th>小组名称</th>
+                <th>作品名称</th>
+                </thead>
+                <tbody>
+                <td>
+                    <select class="form-control" name="group_name">
+                        {% if com_need.group_name == 1 %}
+                            <option value="1" selected>True</option>
+                            <option value="0">False</option>
+                        {% else %}
+                            <option value="1">True</option>
+                            <option value="0" selected>False</option>
+                        {% endif %}
+                    </select>
+                </td>
+                <td>
+                    <select class="form-control" name="product_name">
+                        {% if com_need.product_name == 1 %}
+                            <option value="1" selected>True</option>
+                            <option value="0">False</option>
+                        {% else %}
+                            <option value="1">True</option>
+                            <option value="0" selected>False</option>
+                        {% endif %}
+                    </select>
+                </td>
+                </tbody>
+            </table>
+
+            <div class="row">
+                <h3>上传附件</h3>
+            </div>
+            <div class="row">
+                <input type="file" name="com_attach" style="display:inline-block;"/>
+                {% if com_publish.com_attachment %}
+                    <p class="help-block" style="display:inline-block;">客官已经上传过文件啦：）</p>
+                {% else %}
+                    <p class="help-block" style="display:inline-block;">客官还没有上传过文件呢：(</p>
+                {% endif %}
+            </div>
+
+            <div class="row">
+                <h3>报名步骤</h3>
+            </div>
+            <div class="row">
+                <textarea class="form-control" rows="5" name="step">{{ com_publish.apply_step }}</textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary pull-right">确认更改</button>
+        </form>
+    </div>
+{% endblock %}

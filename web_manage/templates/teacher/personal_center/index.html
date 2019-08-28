@@ -1,0 +1,93 @@
+{% extends 'teacher/personal_center/base.html' %}
+{% load staticfiles %}
+
+{% block title %}
+    学科竞赛|个人中心
+{% endblock %}
+
+{% block active1 %}
+    active
+{% endblock %}
+
+{% block body %}
+    <div class="panel-heading">
+        <h3>参赛小组</h3>
+    </div>
+    <div class="panel-body">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>序号</th>
+                <th>竞赛名称</th>
+                <th>参赛学生</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for com,stu_list,group in info_list %}
+                <tr>
+                    <th>{{ forloop.counter }}</th>
+                    <td>{{ com.com_name }}</td>
+                    <td>
+                        {% for stu in stu_list %}
+                            {% if not forloop.last %}
+                                {{ stu.stu_name }} |
+                            {% else %}
+                                {{ stu.stu_name }}
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    {% if com.com_status == 0 %}
+                        <td>报名中</td>
+                    {% endif %}
+                    {% if com.com_status == 1 %}
+                        <td>报名结束</td>
+                    {% endif %}
+                    {% if com.com_status == 2 %}
+                        <td>比赛中</td>
+                    {% endif %}
+                    {% if com.com_status == 3 %}
+                        <td>已结束</td>
+                    {% endif %}
+                    <td>
+                        <a href="/teacher/teach_apply_deatil?p1={{ com.com_id }}&p2={{ group.group_id }}" class="btn btn-default"
+                           role="button">详情</a>
+
+                        {% if com.com_status == 0 %}
+                            <!-- Small modal -->
+                            <button type="button" class="btn btn-danger" data-toggle="modal"
+                                    data-target="#delete{{ forloop.counter }}">驳回
+                            </button>
+
+                            <div class="modal fade bs-example-modal-sm" id="delete{{ forloop.counter }}" tabindex="-1"
+                                 role="dialog"
+                                 aria-labelledby="mySmallModalLabel">
+                                <div class="modal-dialog modal-sm" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-body">
+                                            <h4>确定要驳回该指导邀请吗？</h4>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">还是算了
+                                            </button>
+                                            <a href="/teacher/reject_apply?p1={{ com.com_id }}&p2={{ group.group_id }}"
+                                               class="btn btn-primary" role="button">我意已决</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% else %}
+                            <button type="button" class="btn btn-primary" data-toggle="modal"
+                                    data-target="#delete{{ forloop.counter }}" disabled="disabled">驳回
+                            </button>
+                        {% endif %}
+
+                    </td>
+                </tr>
+                {% empty %}
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

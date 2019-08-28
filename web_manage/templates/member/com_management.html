@@ -1,0 +1,107 @@
+{% extends 'teacher/personal_center/base.html' %}
+{% load staticfiles %}
+
+{% block title %}
+    学科竞赛|个人中心
+{% endblock %}
+
+{% block active6 %}
+    active
+{% endblock %}
+
+{% block body %}
+    <div class="panel-heading">
+        <h3>比赛管理</h3>
+    </div>
+    <div class="panel-body">
+        <a href="/member/add_com/" class="btn btn-primary btn-lg" role="button">发布比赛</a>
+        <a href="#" class="btn btn-default btn-lg" role="button">先放着</a>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>序号</th>
+                <th>比赛</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for com in com_list %}
+                <tr>
+                    <th>{{ forloop.counter }}</th>
+                    <td>{{ com.com_name }}</td>
+
+                    {% if com.com_status == 0 %}
+                        <td>报名中</td>
+                    {% endif %}
+                    {% if com.com_status == 1 %}
+                        <td>报名结束</td>
+                    {% endif %}
+                    {% if com.com_status == 2 %}
+                        <td>比赛中</td>
+                    {% endif %}
+                    {% if com.com_status == 3 %}
+                        <td>已结束</td>
+                    {% endif %}
+                    <td>
+                        <a href="/member/com_detail_manage?p={{ com.com_id }}" class="btn btn-default" role="button">详情</a>
+
+                        <a class="btn btn-primary" role="button" data-toggle="collapse" data-parent="#accordion"
+                           href="#collapse{{ forloop.counter }}" aria-expanded="false"
+                           aria-controls="collapse{{ forloop.counter }}">
+                            设定状态
+                        </a>
+
+                        <div id="collapse{{ forloop.counter }}" class="panel-collapse collapse" role="tabpanel"
+                             aria-labelledby="heading{{ forloop.counter }}">
+                            <div class="panel-body">
+                                <form class="form-horizontal" action="/member/set_com_status/?p={{ com.com_id }}"
+                                      method="POST">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input name="status" type="checkbox" value="0">
+                                                报名中
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input name="status" type="checkbox" value="1">
+                                                报名结束
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input name="status" type="checkbox" value="2">
+                                                比赛中
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input name="status" type="checkbox" value="3">
+                                                已结束
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <button type="submit" class="btn btn-primary">确定</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
